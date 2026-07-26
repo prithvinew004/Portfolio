@@ -16,7 +16,7 @@ export function Projects() {
       <div className={cn("grid grid-cols-1 gap-[22px] [perspective:1200px] md:grid-cols-3", CONTENT)}>
         {projects.map((p, i) => (
           <Reveal key={p.title} delay={i * 80} className="h-full">
-            <TiltCard className="gborder">
+            <TiltCard className="group gborder transition-shadow duration-500 hover:shadow-[0_24px_70px_-40px_var(--ac)]">
               <div className="m-3.5 flex h-[180px] items-center justify-center rounded-[14px] font-mono text-xs tracking-[0.1em] text-[var(--muted)] bg-[repeating-linear-gradient(135deg,rgba(255,255,255,.045)_0_10px,transparent_10px_22px)]">
                 {p.media}
               </div>
@@ -40,7 +40,13 @@ export function Projects() {
                   href={p.href}
                   className="inline-block border-b border-[var(--ac)] pb-[3px] text-[13px] uppercase tracking-[0.14em] text-[var(--fg)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
                 >
-                  Case study <span aria-hidden>→</span>
+                  Case study{" "}
+                  <span
+                    aria-hidden
+                    className="inline-block transition-transform duration-500 group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
                   <span className="sr-only">for {p.title}</span>
                 </a>
               </div>

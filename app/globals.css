@@ -145,6 +145,92 @@
     linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04)) border-box;
 }
 
+/* --- restored effects ---------------------------------------------------
+   Carried over from the pre-handoff build and retuned to the accent. */
+
+/* The signature: a band of accent travelling through the letterforms. background-clip:text can't
+   paint through the overflow:hidden letter masks the entrance needs, so GSAP staggers --glow per
+   letter and these rules turn that number into colour. */
+/* Registered so CSS can interpolate it — an unregistered custom property is a plain token and
+   keyframes would snap between values instead of animating. */
+@property --glow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.name-letter {
+  --glow: 0;
+  animation: sweep 7s linear infinite;
+}
+
+/* Peaks early then rests, so the band crosses the word and leaves a long dark dwell. The travel
+   comes from a per-letter animation-delay set inline. */
+@keyframes sweep {
+  0%,
+  100% {
+    --glow: 0;
+  }
+  3% {
+    --glow: 1;
+  }
+  9% {
+    --glow: 0;
+  }
+}
+
+@keyframes riseUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.name-solid .name-letter {
+  color: color-mix(in oklab, var(--fg), var(--ac) calc(var(--glow) * 100%));
+  text-shadow: 0 0 calc(var(--glow) * 26px) color-mix(in oklab, var(--ac) calc(var(--glow) * 50%), transparent);
+}
+/* -webkit-text-stroke is inherited, so overriding just the colour on the letter leaves the width
+   from .stroke-fg intact. */
+.name-outline .name-letter {
+  -webkit-text-stroke-color: color-mix(in oklab, rgba(233, 233, 228, 0.85), var(--ac) calc(var(--glow) * 100%));
+}
+
+/* Animista-style: chips bounce in sequence when their card is hovered. --i carries the index so a
+   single rule staggers the whole row without a keyframe per chip. */
+@keyframes tech-pop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-6px) scale(1.06);
+  }
+  72% {
+    transform: translateY(2px) scale(0.99);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+.group:hover .tech-chip {
+  animation: tech-pop 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Outlined display type — "Panda" in the hero, "something" in the contact headline. */
 .stroke-fg {
   color: transparent;

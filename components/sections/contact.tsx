@@ -1,5 +1,6 @@
 import { contact, profile, socials } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
+import { DecryptText } from "@/components/animations/decrypt-text";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER } from "@/lib/section";
@@ -25,9 +26,11 @@ export function Contact() {
 
       <Reveal>
         <h2 className="relative m-0 font-display text-[clamp(40px,7.6vw,124px)] font-extrabold uppercase leading-[0.98] tracking-[-0.02em]">
-          {contact.heading[0]}
+          <DecryptText text={contact.heading[0]} />
           <br />
-          <span className="stroke-ac">{contact.heading[1]}</span>
+          <span className="stroke-ac">
+            <DecryptText text={contact.heading[1]} />
+          </span>
         </h2>
       </Reveal>
 

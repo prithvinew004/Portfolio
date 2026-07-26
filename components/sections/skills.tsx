@@ -25,7 +25,7 @@ export function Skills() {
             >
               <div
                 className={cn(
-                  "h-full rounded-[20px] p-8",
+                  "group h-full rounded-[20px] p-8",
                   // The last card flips the gradient so the accent sits on the outer edge,
                   // mirroring the first — the two wide cards bookend the grid.
                   i === skills.length - 1 ? "gborder-flip" : i === 0 ? "gborder" : "gborder-plain"
@@ -34,10 +34,11 @@ export function Skills() {
                 <div className="mb-2 font-display text-2xl font-bold">{s.group}</div>
                 <div className="mb-[22px] text-sm text-[var(--muted)]">{s.blurb}</div>
                 <ul className="flex flex-wrap gap-2.5">
-                  {s.items.map((item) => (
+                  {s.items.map((item, j) => (
                     <li
                       key={item}
-                      className="rounded-full border border-[var(--hair)] px-4 py-2 text-sm transition-all duration-[250ms] hover:border-[var(--ac)] hover:text-[var(--ac)]"
+                      style={{ "--i": j } as React.CSSProperties}
+                      className="tech-chip rounded-full border border-[var(--hair)] px-4 py-2 text-sm transition-all duration-[250ms] hover:border-[var(--ac)] hover:text-[var(--ac)]"
                     >
                       {item}
                     </li>
@@ -49,8 +50,8 @@ export function Skills() {
         </div>
       </div>
 
-      <div className="mt-[clamp(60px,10vh,120px)] overflow-hidden border-y border-[var(--line)] py-[26px]">
-        <Marquee>
+      <div className="relative mt-[clamp(60px,10vh,120px)] overflow-hidden border-y border-[var(--line)] py-[26px]">
+        <Marquee pauseOnHover>
           {marqueeStack.map((tech) => (
             <span key={tech} className="flex items-center">
               <span className="whitespace-nowrap font-display text-[clamp(20px,2.4vw,32px)] font-bold uppercase tracking-[0.02em] text-[var(--dim)]">
@@ -62,6 +63,9 @@ export function Skills() {
             </span>
           ))}
         </Marquee>
+        {/* Fade the strip into the section edges so words enter and leave instead of popping. */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg)] to-transparent sm:w-32" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg)] to-transparent sm:w-32" />
       </div>
     </section>
   );

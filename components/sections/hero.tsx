@@ -47,13 +47,19 @@ function SplitLine({ text, base, className }: { text: string; base: number; clas
       {[...text].map((ch, i) => (
         <span
           key={i}
-          className="inline-block"
+          data-letter
+          className="name-letter inline-block"
           style={
             reduced
               ? undefined
               : {
-                  animation: `letterUp .9s cubic-bezier(.2,.75,.2,1) ${base + i * 0.05}s both`,
-                  // Held until the preloader lifts, or the entrance plays out of sight behind it.
+                  // Two animations on one element: the entrance (runs once) and the ambient sweep
+                  // (loops). The sweep's own delay is what walks the band across the word.
+                  animation: [
+                    `letterUp .9s cubic-bezier(.2,.75,.2,1) ${base + i * 0.05}s both`,
+                    `sweep 7s linear ${2.4 + base + i * 0.035}s infinite`,
+                  ].join(","),
+                  // Held until the preloader lifts, or all of this plays out of sight behind it.
                   animationPlayState: ready ? "running" : "paused",
                 }
           }
@@ -66,10 +72,21 @@ function SplitLine({ text, base, className }: { text: string; base: number; clas
 }
 
 export function Hero() {
+  const ready = useAppReady();
   const reduced = useReducedMotion();
+
+  /** Staggered rise for the copy under the name, gated on the preloader like the letters. */
+  const rise = (i: number) =>
+    reduced
+      ? undefined
+      : ({
+          animation: `riseUp .8s cubic-bezier(.16,1,.3,1) ${1.15 + i * 0.12}s both`,
+          animationPlayState: ready ? "running" : "paused",
+        } as React.CSSProperties);
   // Both must hold before we pay for three.js: a real pointer and a wide enough viewport.
   const canRender3D = useMediaQuery("(min-width: 768px) and (pointer: fine)");
   const [sceneReady, setSceneReady] = useState(false);
+
 
   return (
     <section
@@ -106,29 +123,42 @@ export function Hero() {
       </div>
 
       <div className={`relative z-[2] ${CONTENT}`}>
-        <div className="mb-[clamp(20px,3vh,36px)] flex items-center gap-2.5 text-[13px] uppercase tracking-[0.22em] text-[var(--muted)]">
-          <span className="size-2 rounded-full bg-[var(--ac)] shadow-[0_0_12px_var(--ac)]" />
+        <div
+          style={rise(0)}
+          className="mb-[clamp(20px,3vh,36px)] flex items-center gap-2.5 text-[13px] uppercase tracking-[0.22em] text-[var(--muted)]"
+        >
+          <span className="relative flex size-2">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--ac)] opacity-70" />
+            <span className="relative inline-flex size-2 rounded-full bg-[var(--ac)] shadow-[0_0_12px_var(--ac)]" />
+          </span>
           <span>{profile.availability}</span>
         </div>
 
         <h1 className="m-0 font-display text-[clamp(28px,8.4vw,128px)] font-extrabold uppercase leading-[0.94] tracking-[-0.02em]">
-          <SplitLine text="Prithviraj" base={0} />
-          <SplitLine text="Panda" base={0.45} className="stroke-fg" />
+          <SplitLine text="Prithviraj" base={0} className="name-solid" />
+          <SplitLine text="Panda" base={0.45} className="stroke-fg name-outline" />
         </h1>
 
-        <div className="mt-[clamp(20px,3vh,36px)] flex flex-wrap items-baseline gap-3.5 text-[clamp(17px,2vw,24px)]">
+        <div
+          style={rise(1)}
+          className="mt-[clamp(20px,3vh,36px)] flex flex-wrap items-baseline gap-3.5 text-[clamp(17px,2vw,24px)]"
+        >
           <span className="text-[var(--muted)]">I build</span>
           <span className="sr-only">{profile.roles.join(", ")}</span>
           <span aria-hidden className="contents">
             <WordRotate words={profile.roles} />
           </span>
+          <span
+            aria-hidden
+            className="ml-0.5 inline-block h-[1em] w-[0.5em] animate-[blink_1.1s_steps(1,end)_infinite] bg-[var(--ac)]"
+          />
         </div>
 
-        <p className="mt-[18px] max-w-[52ch] text-pretty text-[clamp(15px,1.4vw,18px)] leading-[1.7] text-[var(--muted)]">
+        <p style={rise(2)} className="mt-[18px] max-w-[52ch] text-pretty text-[clamp(15px,1.4vw,18px)] leading-[1.7] text-[var(--muted)]">
           {profile.tagline}
         </p>
 
-        <div className="mt-[clamp(28px,4vh,48px)] flex flex-wrap gap-4">
+        <div style={rise(3)} className="mt-[clamp(28px,4vh,48px)] flex flex-wrap gap-4">
           <MagneticButton
             href="#projects"
             className="bg-[var(--ac)] px-[34px] py-[18px] font-semibold tracking-[0.04em] text-[var(--bg)] transition-shadow duration-300 hover:shadow-[0_0_40px_color-mix(in_srgb,var(--ac)_45%,transparent)]"
