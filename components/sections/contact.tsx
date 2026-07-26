@@ -1,50 +1,62 @@
-"use client";
-
-import { ArrowUpRight } from "lucide-react";
-import { profile, socials } from "@/content/resume";
-import { DecryptText } from "@/components/animations/decrypt-text";
+import { contact, profile, socials } from "@/content/resume";
+import { Reveal } from "@/components/animations/reveal";
 import { MagneticButton } from "@/components/ui/magnetic-button";
-import { SECTION, SECTION_CONTAINER, SECTION_LABEL } from "@/lib/section";
-import { cn } from "@/lib/utils";
+import { SectionLabel } from "@/components/ui/section-label";
+import { GUTTER } from "@/lib/section";
 
 export function Contact() {
   return (
-    <section id="contact" className={cn("bg-[var(--hero-void)] text-[var(--hero-cream)]", SECTION)}>
-      <div className={SECTION_CONTAINER}>
-        <h2 className={SECTION_LABEL}>Contact</h2>
+    <section
+      id="contact"
+      className={`relative border-t border-white/[0.07] ${GUTTER} pb-10 pt-[clamp(100px,16vh,200px)]`}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-[-20%] left-[30%] h-[40vw] w-[60vw]"
+        style={{
+          background:
+            "radial-gradient(ellipse,color-mix(in srgb,var(--ac) 7%,transparent) 0%,transparent 65%)",
+        }}
+      />
 
-        <p className="mt-10 font-display text-[clamp(2.2rem,7.5vw,5.5rem)] font-extrabold leading-[0.92] tracking-[-0.04em]">
-          <DecryptText text="Let's work" />
+      <SectionLabel n="05" className="relative mb-9">
+        Contact
+      </SectionLabel>
+
+      <Reveal>
+        <h2 className="relative m-0 font-display text-[clamp(40px,7.6vw,124px)] font-extrabold uppercase leading-[0.98] tracking-[-0.02em]">
+          {contact.heading[0]}
           <br />
-          <DecryptText text="together" />
-        </p>
+          <span className="stroke-ac">{contact.heading[1]}</span>
+        </h2>
+      </Reveal>
 
-        <p className="mt-8 max-w-[46ch] text-pretty text-[var(--hero-sage)] sm:text-lg">
-          {profile.availableForWork
-            ? "Open to new work. The fastest way to reach me is email — I read everything."
-            : "Not taking on new work right now, but always happy to talk."}
-        </p>
+      <ul className="relative mt-[clamp(36px,6vh,64px)] flex flex-wrap gap-4">
+        {socials.map((s) => (
+          <li key={s.label}>
+            <MagneticButton
+              href={s.href}
+              external={s.href.startsWith("http")}
+              className="border border-white/20 px-[38px] py-5 tracking-[0.06em] text-[var(--fg)] transition-all duration-300 hover:border-[var(--ac)] hover:bg-[var(--ac)] hover:text-[var(--bg)]"
+            >
+              {s.label} <span aria-hidden>→</span>
+              {s.href.startsWith("http") && <span className="sr-only">(opens in a new tab)</span>}
+            </MagneticButton>
+          </li>
+        ))}
+      </ul>
 
-        <ul className="mt-14 flex flex-wrap items-center gap-x-6 gap-y-8">
-          {socials.map((social) => {
-            const external = social.href.startsWith("http");
-            return (
-              <li key={social.label}>
-                <MagneticButton href={social.href} className="px-6 py-3">
-                  <span className="flex flex-col items-start gap-0.5 text-left">
-                    <span className="text-[0.6rem] text-[var(--hero-sage)]">{social.label}</span>
-                    <span className="text-[0.72rem] normal-case tracking-normal">{social.handle}</span>
-                  </span>
-                  <ArrowUpRight
-                    aria-hidden
-                    className="size-4 text-[var(--hero-amber)] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                  {external && <span className="sr-only">(opens in a new tab)</span>}
-                </MagneticButton>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="relative mt-[clamp(80px,12vh,140px)] flex flex-wrap justify-between gap-3 border-t border-[var(--line)] pt-6 text-[13px] text-[var(--muted)]">
+        <span>
+          © {new Date().getFullYear()} {profile.name}
+        </span>
+        <span>{contact.footerNote}</span>
+        <a
+          href="#hero"
+          className="text-[var(--muted)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
+        >
+          Back to top <span aria-hidden>↑</span>
+        </a>
       </div>
     </section>
   );

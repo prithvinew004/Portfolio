@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Bricolage_Grotesque, Martian_Mono } from "next/font/google";
+import { Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { Cursor } from "@/components/animations/cursor";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Grain } from "@/components/ui/grain";
 import { PageShell } from "@/components/page-shell";
 import { profile } from "@/content/resume";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display" });
-const mono = Martian_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const syne = Syne({ subsets: ["latin"], weight: ["700", "800"], variable: "--font-syne" });
+const grotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-grotesk",
+});
 
 // Vercel injects VERCEL_PROJECT_PRODUCTION_URL at build time; set NEXT_PUBLIC_SITE_URL once you
 // have a custom domain. metadataBase is what makes the OG and icon URLs absolute — without it
@@ -21,9 +23,7 @@ const siteUrl =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000");
 
-// roles[0] is real content; profile.role is still a PLACEHOLDER, and it would otherwise show
-// up in the browser tab and every social preview.
-const title = `${profile.name} — ${profile.roles[0]}`;
+const title = `${profile.name} — ${profile.role}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -46,20 +46,12 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Dark is the default; only an explicit "light" choice opts out. Runs before paint, so no flash.
-const themeInit = `try{if(localStorage.getItem("theme")!=="light")document.documentElement.classList.add("dark")}catch{document.documentElement.classList.add("dark")}`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
-      </head>
-      <body className={`${geist.variable} ${display.variable} ${mono.variable} font-sans`}>
+    <html lang="en" className={`${syne.variable} ${grotesk.variable}`}>
+      <body className="font-sans">
+        <Grain />
         <Cursor />
-        <div className="fixed right-5 top-5 z-50 sm:right-8 sm:top-8">
-          <ThemeToggle />
-        </div>
         <PageShell>
           <SmoothScroll>{children}</SmoothScroll>
         </PageShell>

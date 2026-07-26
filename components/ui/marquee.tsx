@@ -1,37 +1,15 @@
-// Adapted from Magic UI's marquee. Changed: the duration/gap knobs are plain props instead of
-// arbitrary Tailwind values at the call site, and the keyframes live in globals.css since this
-// project's Tailwind config has no custom animation entries.
-import { type ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils";
 
-interface MarqueeProps extends ComponentPropsWithoutRef<"div"> {
-  reverse?: boolean;
-  pauseOnHover?: boolean;
-  repeat?: number;
-}
-
-export function Marquee({
-  className,
-  reverse = false,
-  pauseOnHover = false,
-  children,
-  repeat = 4,
-  ...props
-}: MarqueeProps) {
+/**
+ * Two identical copies scrolling as one `width:max-content` strip. The keyframe translates -50%,
+ * which lands copy two exactly where copy one started — so the seam is invisible and one loop is
+ * one cycle. Rendering more copies would break that maths.
+ */
+export function Marquee({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div
-      {...props}
-      className={cn("group flex flex-row gap-[var(--gap)] overflow-hidden p-2 [--duration:40s] [--gap:2.5rem]", className)}
-    >
-      {Array.from({ length: repeat }, (_, i) => (
-        <div
-          key={i}
-          aria-hidden={i > 0}
-          className={cn("flex shrink-0 animate-marquee flex-row justify-around gap-[var(--gap)]", {
-            "group-hover:[animation-play-state:paused]": pauseOnHover,
-            "[animation-direction:reverse]": reverse,
-          })}
-        >
+    <div className={cn("flex w-max animate-marquee", className)}>
+      {[0, 1].map((i) => (
+        <div key={i} aria-hidden={i > 0} className="flex shrink-0 items-center">
           {children}
         </div>
       ))}

@@ -1,87 +1,67 @@
-import { skills, stackMarquee } from "@/content/resume";
-import { logos } from "@/content/logos";
+import { skills, marqueeStack } from "@/content/resume";
+import { Reveal } from "@/components/animations/reveal";
 import { Marquee } from "@/components/ui/marquee";
-import { TechLogo } from "@/components/ui/tech-logo";
-import { SECTION, SECTION_CONTAINER, SECTION_LABEL } from "@/lib/section";
+import { SectionLabel } from "@/components/ui/section-label";
+import { GUTTER, CONTENT } from "@/lib/section";
 import { cn } from "@/lib/utils";
 
-// No JS in this section — hover states and the marquee are pure CSS, so it stays a server component.
-
-function Card({ index, group, blurb, items }: (typeof skills)[number] & { index: number }) {
-  return (
-    <article
-      className={cn(
-        "group relative overflow-hidden rounded-2xl border border-[var(--hero-cream)]/10 bg-[var(--hero-deep)] p-6 sm:p-8",
-        "transition-[transform,border-color,box-shadow] duration-500 ease-out",
-        "hover:-translate-y-1 hover:border-[var(--hero-amber)]/40 hover:shadow-[0_18px_50px_-24px_var(--hero-amber)]",
-        // First two cards are the wide pair, the remaining three split the row below.
-        index < 2 ? "md:col-span-3" : "md:col-span-2"
-      )}
-    >
-      <div className="flex items-baseline justify-between gap-4">
-        <h3 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">{group}</h3>
-        <span className="font-mono text-[0.6rem] tracking-[0.2em] text-[var(--hero-sage)]">
-          {String(items.length).padStart(2, "0")}
-        </span>
-      </div>
-
-      <p className="mt-2 max-w-[38ch] text-sm text-[var(--hero-sage)]">{blurb}</p>
-
-      <ul className="mt-7 flex flex-wrap gap-2">
-        {items.map((item, i) => (
-          <li
-            key={item.name}
-            style={{ "--i": i } as React.CSSProperties}
-            className={cn(
-              "tech-chip flex items-center gap-2 rounded-full border border-[var(--hero-cream)]/10 bg-[var(--hero-void)]/60 px-3 py-1.5",
-              "font-mono text-[0.68rem] tracking-tight text-[var(--hero-cream)]/85",
-              "transition-colors duration-300 group-hover:border-[var(--hero-cream)]/20"
-            )}
-          >
-            {"logo" in item && item.logo in logos && (
-              <TechLogo slug={item.logo} className="size-3.5 text-[var(--hero-amber)]" />
-            )}
-            {item.name}
-          </li>
-        ))}
-      </ul>
-    </article>
-  );
-}
-
+// Server component: the pills are hover-only CSS and the marquee is a keyframe, so none of this
+// needs to ship JS.
 export function Skills() {
   return (
-    <section id="skills" className={cn("bg-[var(--hero-void)] text-[var(--hero-cream)]", SECTION, "pt-0")}>
-      <div className={SECTION_CONTAINER}>
-        <h2 className={SECTION_LABEL}>
-          Skills
-        </h2>
+    <section id="skills" className="relative pt-[clamp(60px,10vh,140px)]">
+      <div className={GUTTER}>
+        <SectionLabel n="02" className="mb-9">
+          Stack
+        </SectionLabel>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-6">
-          {skills.slice(0, 2).map((s, i) => (
-            <Card key={s.group} index={i} {...s} />
-          ))}
-
-          {/* The marquee is a card in its own right, not a strip bolted under the grid. */}
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--hero-cream)]/10 bg-[var(--hero-deep)] py-7 md:col-span-6">
-            <Marquee pauseOnHover className="[--duration:34s] [--gap:3.5rem]">
-              {stackMarquee.map((slug) => (
-                <TechLogo
-                  key={slug}
-                  slug={slug}
-                  className="size-8 text-[var(--hero-cream)]/50 transition-colors duration-300 hover:text-[var(--hero-amber)]"
-                />
-              ))}
-            </Marquee>
-            {/* Fade the strip into the card edges so logos enter and leave instead of popping. */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r sm:w-24 from-[var(--hero-deep)] to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l sm:w-24 from-[var(--hero-deep)] to-transparent" />
-          </div>
-
-          {skills.slice(2).map((s, i) => (
-            <Card key={s.group} index={i + 2} {...s} />
+        {/* Frontend(2) + Backend(1) fills row one; Databases(1) + Mobile(2) fills row two. */}
+        <div className={cn("grid grid-cols-1 gap-[18px] md:grid-cols-3", CONTENT)}>
+          {skills.map((s, i) => (
+            <Reveal
+              key={s.group}
+              delay={i % 2 ? 80 : 0}
+              className={cn("h-full", "wide" in s && s.wide && "md:col-span-2")}
+            >
+              <div
+                className={cn(
+                  "h-full rounded-[20px] p-8",
+                  // The last card flips the gradient so the accent sits on the outer edge,
+                  // mirroring the first — the two wide cards bookend the grid.
+                  i === skills.length - 1 ? "gborder-flip" : i === 0 ? "gborder" : "gborder-plain"
+                )}
+              >
+                <div className="mb-2 font-display text-2xl font-bold">{s.group}</div>
+                <div className="mb-[22px] text-sm text-[var(--muted)]">{s.blurb}</div>
+                <ul className="flex flex-wrap gap-2.5">
+                  {s.items.map((item) => (
+                    <li
+                      key={item}
+                      className="rounded-full border border-[var(--hair)] px-4 py-2 text-sm transition-all duration-[250ms] hover:border-[var(--ac)] hover:text-[var(--ac)]"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
           ))}
         </div>
+      </div>
+
+      <div className="mt-[clamp(60px,10vh,120px)] overflow-hidden border-y border-[var(--line)] py-[26px]">
+        <Marquee>
+          {marqueeStack.map((tech) => (
+            <span key={tech} className="flex items-center">
+              <span className="whitespace-nowrap font-display text-[clamp(20px,2.4vw,32px)] font-bold uppercase tracking-[0.02em] text-[var(--dim)]">
+                {tech}
+              </span>
+              <span aria-hidden className="px-[18px] text-[0.6em] text-[var(--ac)]">
+                ◦
+              </span>
+            </span>
+          ))}
+        </Marquee>
       </div>
     </section>
   );

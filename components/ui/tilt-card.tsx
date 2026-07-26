@@ -1,54 +1,63 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useMediaQuery, useReducedMotion } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
-const MAX_TILT = 9; // degrees; past ~12 the text edges start to shimmer
-const SPRING = { stiffness: 200, damping: 22, mass: 0.4 };
+const MAX_TILT = 9; // degrees, per the design
 
 /**
- * Perspective tilt that follows the pointer. The tilt lives here rather than on the entrance
- * wrapper so a whileInView transform and the rotation never write to the same element.
+ * Perspective tilt plus a glare that tracks the pointer. Both are written straight to style rather
+ * than through React state — this fires on every mousemove, and a re-render per frame would be the
+ * expensive way to do the same thing.
  */
 export function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const glare = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
-  // A coarse pointer has no hover to track, and tilting on tap just looks like a glitch.
+  // A coarse pointer has no hover to track, and tilting on tap reads as a glitch.
   const finePointer = useMediaQuery("(pointer: fine)");
   const enabled = finePointer && !reduced;
 
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const rotateX = useSpring(useTransform(py, [-0.5, 0.5], [MAX_TILT, -MAX_TILT]), SPRING);
-  const rotateY = useSpring(useTransform(px, [-0.5, 0.5], [-MAX_TILT, MAX_TILT]), SPRING);
-
-  function onPointerMove(e: React.PointerEvent) {
-    if (!enabled || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    px.set((e.clientX - r.left) / r.width - 0.5);
-    py.set((e.clientY - r.top) / r.height - 0.5);
+  function onMouseMove(e: React.MouseEvent) {
+    const el = ref.current;
+    if (!enabled || !el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `rotateY(${px * MAX_TILT}deg) rotateX(${-py * MAX_TILT}deg)`;
+    if (glare.current) {
+      glare.current.style.background = `radial-gradient(420px circle at ${(px + 0.5) * 100}% ${
+        (py + 0.5) * 100
+      }%,rgba(255,255,255,.09),transparent 60%)`;
+    }
   }
 
   function reset() {
-    px.set(0);
-    py.set(0);
+    if (ref.current) ref.current.style.transform = "";
+    if (glare.current) glare.current.style.background = "";
   }
 
   return (
-    // Perspective must sit on the parent — on the rotating element itself it flattens the effect.
-    <div style={{ perspective: 1000 }} className="h-full">
-      <motion.div
-        ref={ref}
-        onPointerMove={onPointerMove}
-        onPointerLeave={reset}
-        onBlur={reset}
-        style={enabled ? { rotateX, rotateY, transformStyle: "preserve-3d" } : undefined}
-        className={cn("h-full", className)}
-      >
-        {children}
-      </motion.div>
+    <div
+      ref={ref}
+      data-tilt
+      onMouseMove={onMouseMove}
+      onMouseLeave={reset}
+      // transform-style + the parent's perspective are what make the rotation read as depth
+      // rather than a skew.
+      className={cn(
+        "relative h-full overflow-hidden rounded-[22px] [transform-style:preserve-3d] transition-transform duration-150 ease-out",
+        className
+      )}
+    >
+      <div
+        ref={glare}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{ background: "radial-gradient(400px circle at 50% 0%,rgba(255,255,255,.06),transparent 60%)" }}
+      />
+      {children}
     </div>
   );
 }

@@ -1,213 +1,132 @@
-// Single source of truth for all personal content. Never hardcode these in components.
-// TODO(prithviraj): resume text was not supplied — replace every PLACEHOLDER below.
+// Single source of truth for all copy. Content below comes from the Claude Design handoff
+// (Prithviraj Portfolio.dc.html) unless noted.
 
 export const profile = {
   name: "Prithviraj Panda",
-  role: "PLACEHOLDER — e.g. Full-Stack Engineer",
-  location: "PLACEHOLDER — City, Country",
-  email: "sandralili26@outlook.com",
-  phone: "",
-  tagline: "PLACEHOLDER — one line that sits under the hero headline.",
-  // Cycled by the hero's word-rotate. Keep them a similar length so the line doesn't jump.
-  roles: ["Full-Stack Engineer", "Next.js Developer", "SaaS Builder"],
-  // Revealed word-by-word on scroll, so length matters: aim for 45–70 words. Under ~30 the reveal
-  // finishes before the section is halfway up the viewport and the effect is lost.
-  about:
-    "PLACEHOLDER — I build products end to end, from the schema up to the last pixel. Most of my work lives in the space between a design that has to feel effortless and a backend that has to stay boring under load. I care about the parts users never see: the migration that ran clean, the query that stopped timing out, the deploy nobody noticed.",
-  resumeUrl: "/resume.pdf",
-  availableForWork: true,
+  role: "Full-Stack Software Engineer",
+  location: "India",
+  availability: "Available for opportunities · India",
+  // Handles confirmed by the user; the design's placeholder links and hello@ address are not used.
+  email: "prithvi.new004@gmail.com",
+  tagline:
+    "Full-stack software engineer with 1.5+ years shipping SaaS products end to end — Next.js and React up front, Node and TypeScript underneath.",
+  // Cycled after "I build" in the hero.
+  roles: [
+    "Full-Stack SaaS products",
+    "Next.js + React frontends",
+    "Node & TypeScript APIs",
+    "things that ship",
+  ],
+  aboutHeadline:
+    "I turn ideas into shipped product — fast interfaces, clean APIs, and the small details that make software feel alive.",
+  aboutBody:
+    "Since 2024 I've been building SaaS products across the whole stack: designing schemas, wiring auth, tuning queries, and obsessing over the last 10% of the UI. I like small teams, quick iterations, and owning features from first sketch to production.",
 };
 
-// Rendered as label + handle rather than brand icons: simple-icons dropped the LinkedIn mark and
-// lucide dropped brand icons entirely, so one real logo beside two improvised ones would look off.
 export const socials = [
-  { label: "GitHub", handle: "prithvinew004", href: "https://github.com/prithvinew004" },
-  { label: "LinkedIn", handle: "prithvirajpanda", href: "https://www.linkedin.com/in/prithvirajpanda" },
-  // TODO(prithviraj): confirm this is the address you want public — it came from the environment.
-  { label: "Email", handle: profile.email, href: `mailto:${profile.email}` },
+  { label: "GitHub", href: "https://github.com/prithvinew004" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/prithvirajpanda" },
+  { label: "Email", href: `mailto:${profile.email}` },
 ] as const;
 
-// TODO(prithviraj): these are inferred from the roles above, not from a resume — confirm or swap.
-// Card sizing is layout, so it lives in the Skills component, derived from array order.
-// `logo` keys into content/logos.ts; a tech with no logo there renders as a plain wordmark.
+/** `wide` spans two of the three columns. Order matters: it's what makes the rows tile. */
 export const skills = [
   {
     group: "Frontend",
-    blurb: "Interfaces that stay fast once real data shows up.",
-    items: [
-      { name: "React", logo: "react" },
-      { name: "Next.js", logo: "nextdotjs" },
-      { name: "TypeScript", logo: "typescript" },
-      { name: "Tailwind CSS", logo: "tailwindcss" },
-    ],
+    blurb: "Interfaces that feel instant",
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+    wide: true,
   },
-  {
-    group: "Backend",
-    blurb: "APIs that stay boring under load.",
-    items: [
-      { name: "Node.js", logo: "nodedotjs" },
-      { name: "GraphQL", logo: "graphql" },
-      { name: "REST" },
-      { name: "tRPC" },
-    ],
-  },
+  { group: "Backend", blurb: "APIs built to scale", items: ["Node.js", "Express", "FastAPI"] },
   {
     group: "Databases",
-    blurb: "Schemas designed before the first query.",
-    items: [
-      { name: "PostgreSQL", logo: "postgresql" },
-      { name: "MongoDB", logo: "mongodb" },
-      { name: "Redis", logo: "redis" },
-      { name: "Prisma", logo: "prisma" },
-    ],
+    blurb: "Data modelled properly",
+    items: ["MongoDB", "PostgreSQL", "Supabase", "Prisma"],
   },
-  {
-    group: "Mobile",
-    blurb: "One codebase, two stores.",
-    items: [
-      { name: "React Native", logo: "react" },
-      { name: "Expo", logo: "expo" },
-    ],
-  },
-  {
-    group: "DevOps",
-    blurb: "Deploys nobody has to think about.",
-    items: [
-      { name: "Docker", logo: "docker" },
-      { name: "Vercel", logo: "vercel" },
-      { name: "Git", logo: "git" },
-      { name: "CI/CD" },
-    ],
-  },
+  { group: "Mobile", blurb: "One codebase, every screen", items: ["Flutter", "Ionic"], wide: true },
 ] as const;
 
-/** Order the marquee runs in. Slugs must exist in content/logos.ts. */
-export const stackMarquee = [
-  "react",
-  "nextdotjs",
-  "typescript",
-  "tailwindcss",
-  "nodedotjs",
-  "graphql",
-  "postgresql",
-  "prisma",
-  "mongodb",
-  "redis",
-  "docker",
-  "vercel",
-  "expo",
-  "git",
+export const marqueeStack = [
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Node.js",
+  "Tailwind",
+  "Express",
+  "FastAPI",
+  "MongoDB",
+  "PostgreSQL",
+  "Supabase",
+  "Prisma",
+  "Flutter",
+  "Ionic",
 ] as const;
 
-// Company names are real; every role, date and bullet below is still PLACEHOLDER.
-// The timeline renders exactly three bullets per entry — keep `highlights` at three, and keep them
-// short (roughly under 110 characters) or the pinned cards outgrow the viewport.
+export const experienceIntro = {
+  heading: ["Where I've", "worked"],
+  blurb: "Startups and IT consultancies — always close to the product, always shipping.",
+};
+
+// TODO(prithviraj): these date ranges don't reconcile — DigiFrills runs Oct 2024 to Present, but
+// LOMAA (Oct–Dec 2025) and Navachis (Jun–Oct 2025) both fall inside it. Confirm before publishing.
+// Stored as display strings because the design writes them that way, not as sortable dates.
 export const experience = [
   {
     company: "DigiFrills",
-    role: "PLACEHOLDER — Title",
-    start: "2025-01",
-    end: null, // null renders as "Present"
-    location: "PLACEHOLDER",
-    href: "",
-    highlights: [
-      "PLACEHOLDER — impact-first bullet with a number in it.",
-      "PLACEHOLDER — what you built and what it changed.",
-      "PLACEHOLDER — scope, ownership, or a result you can defend.",
-    ],
-    stack: ["Next.js", "TypeScript"],
+    role: "Full Stack Engineer",
+    period: "Oct 2024 — Present",
+    blurb:
+      "Building and shipping SaaS features end to end — Next.js frontends, Node services, Prisma data layers — with ownership from spec to deploy.",
   },
   {
-    company: "LOMAA",
-    role: "PLACEHOLDER — Title",
-    start: "2024-01",
-    end: "2024-12",
-    location: "PLACEHOLDER",
-    href: "",
-    highlights: [
-      "PLACEHOLDER — impact-first bullet with a number in it.",
-      "PLACEHOLDER — what you built and what it changed.",
-      "PLACEHOLDER — scope, ownership, or a result you can defend.",
-    ],
-    stack: ["React", "Node.js"],
+    company: "LOMAA IT Solutions",
+    role: "Software Engineer",
+    period: "Oct — Dec 2025",
+    blurb:
+      "Delivered client-facing web modules and REST integrations on tight timelines, working across React frontends and Express backends.",
   },
   {
-    company: "Navachis",
-    role: "PLACEHOLDER — Title",
-    start: "2023-01",
-    end: "2023-12",
-    location: "PLACEHOLDER",
-    href: "",
-    highlights: [
-      "PLACEHOLDER — impact-first bullet with a number in it.",
-      "PLACEHOLDER — what you built and what it changed.",
-      "PLACEHOLDER — scope, ownership, or a result you can defend.",
-    ],
-    stack: ["React", "PostgreSQL"],
+    company: "Navachis IT Solutions",
+    role: "Software Engineer",
+    period: "Jun — Oct 2025",
+    blurb:
+      "Built cross-platform app screens and FastAPI endpoints, and hardened auth flows across mobile and web clients.",
   },
 ] as const;
 
-// TODO(prithviraj): no project details were supplied — every title, summary and link is PLACEHOLDER.
-// `summary` is always on the card; `details` is what the hover state reveals, so keep it to one or
-// two short sentences. An empty `repo` hides the GitHub link rather than rendering a dead one.
+// `media` is the placeholder caption the design shows in the card's image band. Swap it for a real
+// image once there is one; `href` currently points at contact, as drawn.
 export const projects = [
   {
-    slug: "project-one",
-    title: "PLACEHOLDER — Project One",
-    year: "2025",
-    summary: "PLACEHOLDER — one sentence on what it does and who it is for.",
-    details: "PLACEHOLDER — the part worth bragging about: the hard problem, or the number it moved.",
-    stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma"],
-    links: { live: "", repo: "https://github.com/PLACEHOLDER/project-one" },
+    n: "01",
+    title: "SaaS MVP",
+    blurb:
+      "Idea to launch: multi-tenant SaaS with auth, billing-ready schema, and a dashboard users actually enjoy.",
+    stack: ["Next.js", "Prisma", "Supabase"],
+    media: "[ product screenshot ]",
+    href: "#contact",
   },
   {
-    slug: "project-two",
-    title: "PLACEHOLDER — Project Two",
-    year: "2024",
-    summary: "PLACEHOLDER — one sentence on what it does and who it is for.",
-    details: "PLACEHOLDER — the part worth bragging about: the hard problem, or the number it moved.",
-    stack: ["React", "Node.js", "Redis", "Docker"],
-    links: { live: "", repo: "https://github.com/PLACEHOLDER/project-two" },
+    n: "02",
+    title: "REST API Platform",
+    blurb:
+      "Production-grade API with JWT auth, role-based access, rate limiting, and clean, versioned endpoints.",
+    stack: ["Node.js", "Express", "MongoDB", "JWT"],
+    media: "[ API docs / console ]",
+    href: "#contact",
   },
   {
-    slug: "project-three",
-    title: "PLACEHOLDER — Project Three",
-    year: "2024",
-    summary: "PLACEHOLDER — one sentence on what it does and who it is for.",
-    details: "PLACEHOLDER — the part worth bragging about: the hard problem, or the number it moved.",
-    stack: ["React Native", "Expo", "GraphQL"],
-    links: { live: "", repo: "https://github.com/PLACEHOLDER/project-three" },
+    n: "03",
+    title: "Cross-Platform App",
+    blurb:
+      "One product, every device — hybrid mobile app backed by a fast FastAPI service and shared design system.",
+    stack: ["Ionic", "Angular", "Flutter", "FastAPI"],
+    media: "[ mobile screens ]",
+    href: "#contact",
   },
 ] as const;
 
-export const education = [
-  {
-    school: "PLACEHOLDER University",
-    degree: "PLACEHOLDER Degree",
-    start: "2020",
-    end: "2024",
-    detail: "",
-  },
-] as const;
-
-export const navigation = [
-  { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
-] as const;
-
-export const resume = {
-  profile,
-  socials,
-  skills,
-  experience,
-  projects,
-  education,
-  navigation,
+export const contact = {
+  heading: ["Let's build", "something"],
+  footerNote: "Designed & built by me — obviously",
 };
-
-export type Profile = typeof profile;
-export type Experience = (typeof experience)[number];
-export type Project = (typeof projects)[number];
-export type Education = (typeof education)[number];

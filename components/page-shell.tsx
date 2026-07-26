@@ -6,7 +6,9 @@ import { useReducedMotion } from "@/hooks/use-media-query";
 
 const DURATION_MS = 1300;
 
-/** True once the preloader is gone. The hero waits on this so its entrance isn't spent behind it. */
+/** True once the preloader is gone. The hero waits on this so its entrance isn't spent behind
+ *  it. Defaults true so a server render — or a client where this never mounts — shows the hero
+ *  animating normally rather than paused at opacity 0. */
 const ReadyContext = createContext(true);
 export const useAppReady = () => useContext(ReadyContext);
 
@@ -57,14 +59,12 @@ export function PageShell({ children }: { children: React.ReactNode }) {
   const reduced = useReducedMotion();
   // Starts false so the server render and first client paint agree; the effect below decides.
   const [loading, setLoading] = useState(false);
-  const [decided, setDecided] = useState(false);
 
   useEffect(() => {
     // Only the first visit in a tab gets the preloader — seeing it on every back-navigation is a
     // tax, not a flourish.
     const seen = sessionStorage.getItem("preloaded") === "1";
     if (!seen && !reduced) setLoading(true);
-    setDecided(true);
   }, [reduced]);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export function PageShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ReadyContext.Provider value={decided && !loading}>
+    <ReadyContext.Provider value={!loading}>
       <AnimatePresence>{loading && <Counter key="preloader" onDone={finish} />}</AnimatePresence>
       {children}
     </ReadyContext.Provider>

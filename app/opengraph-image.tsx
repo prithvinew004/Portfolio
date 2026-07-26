@@ -8,10 +8,10 @@ export const alt = `${profile.name} — ${profile.roles[0]}`;
 
 // Hex, not the CSS custom properties: ImageResponse resolves a Satori subset that has no var()
 // support and no cascade to inherit them from.
-const VOID = "#070c0c";
-const CREAM = "#efe7d7";
-const AMBER = "#ffb627";
-const SAGE = "#7d908c";
+const BG = "#0a0a0a";
+const FG = "#e9e9e4";
+const AC = "#cdff57";
+const MUTED = "#9a9a92";
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -23,12 +23,12 @@ export default function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: VOID,
+          background: BG,
           padding: 72,
           position: "relative",
         }}
       >
-        {/* Same amber bloom as the hero spotlight, flattened to a radial gradient. */}
+        {/* Same accent bloom as the hero, flattened to a radial gradient. */}
         <div
           style={{
             position: "absolute",
@@ -36,7 +36,7 @@ export default function OpengraphImage() {
             left: -160,
             width: 900,
             height: 900,
-            background: `radial-gradient(circle, rgba(255,182,39,0.30) 0%, rgba(255,122,24,0.10) 45%, rgba(7,12,12,0) 70%)`,
+            background: `radial-gradient(circle, rgba(205,255,87,0.26) 0%, rgba(205,255,87,0.08) 45%, rgba(10,10,10,0) 70%)`,
             display: "flex",
           }}
         />
@@ -47,15 +47,15 @@ export default function OpengraphImage() {
             right: -200,
             width: 760,
             height: 760,
-            background: `radial-gradient(circle, rgba(47,158,147,0.22) 0%, rgba(7,12,12,0) 68%)`,
+            background: `radial-gradient(circle, rgba(233,233,228,0.10) 0%, rgba(10,10,10,0) 68%)`,
             display: "flex",
           }}
         />
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 12, height: 12, borderRadius: 999, background: AMBER, display: "flex" }} />
-          <div style={{ fontSize: 22, letterSpacing: 8, color: SAGE, textTransform: "uppercase" }}>
-            {profile.availableForWork ? "Available for work" : "Portfolio"}
+          <div style={{ width: 12, height: 12, borderRadius: 999, background: AC, display: "flex" }} />
+          <div style={{ fontSize: 22, letterSpacing: 8, color: MUTED, textTransform: "uppercase" }}>
+            {profile.availability}
           </div>
         </div>
 
@@ -66,21 +66,21 @@ export default function OpengraphImage() {
               fontWeight: 800,
               letterSpacing: -5,
               lineHeight: 1,
-              color: CREAM,
+              color: FG,
               display: "flex",
             }}
           >
             {profile.name}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 28 }}>
-            <div style={{ fontSize: 34, color: AMBER, display: "flex" }}>&gt;</div>
-            <div style={{ fontSize: 34, color: CREAM, display: "flex" }}>
+            <div style={{ fontSize: 34, color: AC, display: "flex" }}>&gt;</div>
+            <div style={{ fontSize: 34, color: FG, display: "flex" }}>
               {profile.roles.join("  ·  ")}
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", height: 4, background: AMBER, width: 240 }} />
+        <div style={{ display: "flex", height: 4, background: AC, width: 240 }} />
       </div>
     ),
     size

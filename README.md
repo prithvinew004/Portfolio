@@ -14,15 +14,14 @@ npm start       # serve the production build
 ## Content
 
 All copy lives in [`content/resume.ts`](content/resume.ts) — nothing personal is hardcoded in a
-component. Anything still reading `PLACEHOLDER` needs replacing:
+component. Content came from the Claude Design handoff (`Prithviraj Portfolio.dc.html`).
 
-- `profile.role`, `profile.tagline`, `profile.about`, `profile.location`
-- every `projects[]` entry (titles, summaries, repo URLs)
-- every `experience[]` role, date and bullet (company names are real)
-- `skills[]` — inferred from the roles, not from a resume
+Still needs your input:
 
-`content/logos.ts` holds monochrome brand paths extracted from
-[simple-icons](https://simpleicons.org) (CC0); logos remain trademarks of their owners.
+- **Experience dates don't reconcile.** DigiFrills reads `Oct 2024 — Present`, but LOMAA
+  (`Oct — Dec 2025`) and Navachis (`Jun — Oct 2025`) both fall inside that range.
+- **Projects are generic.** "SaaS MVP" / "REST API Platform" / "Cross-Platform App" have no repo
+  or live links, and each card's image band is a placeholder caption.
 
 ## Deploying to Vercel
 
@@ -48,7 +47,9 @@ the favicon is [`app/icon.svg`](app/icon.svg).
   runs zero animations and nothing is left hidden.
 - **Lenis and ScrollTrigger share a clock** via the bridge in `components/animations/smooth-scroll.tsx`.
   Removing it desyncs every scroll-driven animation.
-- **The pinned Experience section uses `pinType: "transform"`.** The default `position: fixed` pin is
-  counted by Chrome as a full-viewport layout shift each time it engages.
-- Section rhythm (padding, container, label style) comes from `lib/section.ts`. Use it for new
-  sections so they stay aligned with the rest.
+- **Dark only.** The design defines no light palette, so there is no theme toggle and no
+  light-mode variables — don't reintroduce half of one.
+- Section rhythm (gutter, vertical padding, content measure) comes from `lib/section.ts`.
+- Three colour values deviate from the design on purpose, each marked in the source: the About
+  reveal's resting opacity, `--dim`, and the small-text uses of `--dim`. All three failed WCAG
+  contrast at the designed values.

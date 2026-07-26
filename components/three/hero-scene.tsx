@@ -40,7 +40,7 @@ function Blob() {
       <Sphere args={[1, 160, 160]} scale={1.42}>
         <MeshDistortMaterial
           ref={material}
-          color="#100b07"
+          color="#0d0d0c"
           distort={0.5}
           speed={1.1}
           roughness={0.36}
@@ -69,15 +69,15 @@ export default function HeroScene({ onReady }: { onReady?: () => void }) {
       {/* Body shading comes from real lights, not the environment: any discrete lightformer in
           front reflects off the surface as a visible disc or patch. */}
       <ambientLight intensity={0.12} />
-      <directionalLight position={[-4, 2.5, 4]} intensity={2.4} color="#ffce8a" />
-      <directionalLight position={[4.5, -1, 2]} intensity={0.45} color="#2f9e93" />
+      <directionalLight position={[-4, 2.5, 4]} intensity={2.4} color="#eaffc0" />
+      <directionalLight position={[4.5, -1, 2]} intensity={0.5} color="#8fa8b8" />
 
       {/* Lightformers instead of a preset HDR: same studio look, zero network requests. Both panels
           sit behind the blob so they only graze the silhouette as rim light. */}
       <Environment resolution={256}>
-        <color attach="background" args={["#040605"]} />
-        <Lightformer form="rect" intensity={5} color="#ffb627" position={[-4.5, 1.5, -4]} scale={[7, 9, 1]} />
-        <Lightformer form="rect" intensity={3.2} color="#2f9e93" position={[4.5, 2.5, -3.5]} scale={[5, 8, 1]} />
+        <color attach="background" args={["#050505"]} />
+        <Lightformer form="rect" intensity={5} color="#cdff57" position={[-4.5, 1.5, -4]} scale={[7, 9, 1]} />
+        <Lightformer form="rect" intensity={2.6} color="#e9e9e4" position={[4.5, 2.5, -3.5]} scale={[5, 8, 1]} />
       </Environment>
     </Canvas>
   );

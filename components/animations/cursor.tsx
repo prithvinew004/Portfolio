@@ -2,47 +2,56 @@
 
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useReducedMotion } from "@/hooks/use-media-query";
+import { useMediaQuery, useReducedMotion } from "@/hooks/use-media-query";
 
-const RING = 32;
+const REST = 36;
+const HOVER = 58;
 
 export function Cursor() {
   const reduced = useReducedMotion();
+  const finePointer = useMediaQuery("(pointer: fine)");
+  const enabled = finePointer && !reduced;
+
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
+  // The ring lags behind; the dot stays pinned to the real pointer.
   const ringX = useSpring(x, { stiffness: 260, damping: 26, mass: 0.4 });
   const ringY = useSpring(y, { stiffness: 260, damping: 26, mass: 0.4 });
-  const [active, setActive] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [seen, setSeen] = useState(false);
 
   useEffect(() => {
-    if (reduced) return;
+    if (!enabled) return;
     const move = (e: PointerEvent) => {
       x.set(e.clientX);
       y.set(e.clientY);
-      setActive(
-        !!(e.target as Element)?.closest?.("a, button, [role=button], input, textarea, [data-cursor]")
-      );
+      setSeen(true);
+      setHovering(!!(e.target as Element)?.closest?.("a, button, [data-tilt]"));
     };
     window.addEventListener("pointermove", move, { passive: true });
     return () => window.removeEventListener("pointermove", move);
-  }, [reduced, x, y]);
+  }, [enabled, x, y]);
 
-  if (reduced) return null;
+  // Returning null also restores the system cursor: globals.css only hides it on a fine pointer,
+  // and the reduced-motion block puts it back.
+  if (!enabled) return null;
 
   return (
-    // pointer-fine keeps this off touch devices entirely. Native cursor stays visible on purpose.
-    <div className="pointer-events-none fixed inset-0 z-[9999] hidden pointer-fine:block">
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-[70]">
       <motion.div
-        aria-hidden
-        style={{ x: ringX, y: ringY, width: RING, height: RING, translateX: "-50%", translateY: "-50%" }}
-        animate={{ scale: active ? 1.6 : 1, opacity: active ? 0.9 : 0.5 }}
-        transition={{ duration: 0.2 }}
-        className="absolute rounded-full border border-foreground mix-blend-difference"
+        style={{ x: ringX, y: ringY, translateX: "-50%", translateY: "-50%" }}
+        animate={{
+          width: hovering ? HOVER : REST,
+          height: hovering ? HOVER : REST,
+          opacity: seen ? 0.9 : 0,
+        }}
+        transition={{ duration: 0.25 }}
+        className="absolute rounded-full border border-[var(--ac)]"
       />
       <motion.div
-        aria-hidden
         style={{ x, y, translateX: "-50%", translateY: "-50%" }}
-        className="absolute size-1.5 rounded-full bg-foreground mix-blend-difference"
+        animate={{ opacity: seen ? 1 : 0 }}
+        className="absolute size-1.5 rounded-full bg-[var(--ac)]"
       />
     </div>
   );

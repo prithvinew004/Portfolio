@@ -1,64 +1,67 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useState } from "react";
 import { motion } from "framer-motion";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ArrowDown } from "lucide-react";
 import { profile } from "@/content/resume";
 import { useMediaQuery, useReducedMotion } from "@/hooks/use-media-query";
+import { useAppReady } from "@/components/page-shell";
 import { WordRotate } from "@/components/ui/word-rotate";
 import { MagneticButton } from "@/components/ui/magnetic-button";
-import { Spotlight } from "@/components/ui/spotlight";
-import { useAppReady } from "@/components/page-shell";
+import { GUTTER, CONTENT } from "@/lib/section";
 
-// ssr:false keeps three.js out of the server render and out of the initial chunk entirely.
-// The gradient fallback is reused as the loading state so the slot is never blank and never
-// changes size — the swap is a crossfade in a fixed-size container, so it costs no layout shift.
+// ssr:false keeps three.js out of the server render and out of the initial chunk. The gradient
+// fallback doubles as the loading state so the slot is never blank and never changes size.
 const HeroScene = dynamic(() => import("@/components/three/hero-scene"), {
   ssr: false,
   loading: () => <GradientFallback />,
 });
 
-const WORK_HREF = "#work";
-
-function NameLetters({ text }: { text: string }) {
-  return (
-    <>
-      {text.split(" ").map((word) => (
-        // Words stay unbroken; only whole words wrap.
-        <span key={word} className="mr-[0.22em] inline-block whitespace-nowrap last:mr-0">
-          {word.split("").map((char, i) => (
-            <span key={`${char}${i}`} className="inline-block overflow-hidden pb-[0.06em]">
-              <span data-letter className="name-letter inline-block will-change-transform">
-                {char}
-              </span>
-            </span>
-          ))}
-        </span>
-      ))}
-    </>
-  );
-}
-
-/** Static stand-in for the blob: same mass, same light, no WebGL. Sits above the copy on phones so
- *  it reads as its own object rather than a smudge behind the text. */
+/** Static stand-in for the blob: no WebGL, same mass and position. */
 function GradientFallback() {
   return (
     <div
       aria-hidden
-      className="absolute right-[-22%] top-[6%] aspect-square w-[72vw] rounded-full opacity-60 blur-[14px] md:right-[-4%] md:top-1/2 md:w-[42vw] md:-translate-y-1/2"
+      className="absolute right-[-18%] top-1/2 aspect-square w-[80vw] -translate-y-1/2 rounded-full opacity-70 blur-[14px] md:right-[-6%] md:w-[46vw]"
       style={{
-        // Layer order matters: the dark disc paints on top of the amber and teal discs, and its
-        // offset is what leaves them showing as rim crescents — same read as the lit 3D blob.
         background: [
-          "radial-gradient(circle at 52% 48%, #0d0906 0 47%, transparent 48%)",
-          "radial-gradient(circle at 45% 39%, var(--hero-amber) 0 34%, var(--hero-ember) 46%, transparent 56%)",
-          "radial-gradient(circle at 66% 61%, var(--hero-teal) 0 30%, transparent 50%)",
+          "radial-gradient(circle at 52% 48%, #0d0d0c 0 47%, transparent 48%)",
+          "radial-gradient(circle at 44% 38%, var(--ac) 0 30%, #6d8a2e 46%, transparent 58%)",
         ].join(","),
       }}
     />
+  );
+}
+
+/**
+ * Splits a line into letters that rise into place. A CSS animation with a per-letter delay rather
+ * than a JS timeline — same effect for no runtime — and `both` fill keeps each letter hidden
+ * before its turn and parked after it.
+ */
+function SplitLine({ text, base, className }: { text: string; base: number; className?: string }) {
+  const ready = useAppReady();
+  const reduced = useReducedMotion();
+
+  return (
+    <span className={`block overflow-hidden whitespace-nowrap pb-[0.06em] ${className ?? ""}`}>
+      {[...text].map((ch, i) => (
+        <span
+          key={i}
+          className="inline-block"
+          style={
+            reduced
+              ? undefined
+              : {
+                  animation: `letterUp .9s cubic-bezier(.2,.75,.2,1) ${base + i * 0.05}s both`,
+                  // Held until the preloader lifts, or the entrance plays out of sight behind it.
+                  animationPlayState: ready ? "running" : "paused",
+                }
+          }
+        >
+          {ch}
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -67,35 +70,25 @@ export function Hero() {
   // Both must hold before we pay for three.js: a real pointer and a wide enough viewport.
   const canRender3D = useMediaQuery("(min-width: 768px) and (pointer: fine)");
   const [sceneReady, setSceneReady] = useState(false);
-  // Hold the entrance until the preloader lifts, otherwise it plays out of sight behind it.
-  const ready = useAppReady();
-  const scope = useRef<HTMLElement>(null);
-
-  useGSAP(
-    () => {
-      if (reduced || !ready) return;
-      gsap
-        .timeline({ defaults: { ease: "expo.out" } })
-        .from("[data-letter]", { yPercent: 115, duration: 1.1, stagger: 0.028 })
-        .from("[data-rise]", { y: 18, opacity: 0, duration: 0.8, stagger: 0.12 }, "-=0.65");
-
-      // Ambient phosphor sweep: a band of --glow walks the letters, then a long dark dwell.
-      gsap
-        .timeline({ repeat: -1, repeatDelay: 4.5, delay: 2 })
-        .to("[data-letter]", { "--glow": 1, duration: 0.3, stagger: 0.035, ease: "none" })
-        .to("[data-letter]", { "--glow": 0, duration: 0.45, stagger: 0.035, ease: "none" }, 0.22);
-    },
-    { scope, dependencies: [reduced, ready] }
-  );
 
   return (
     <section
-      ref={scope}
-      className="relative isolate min-h-svh overflow-hidden bg-[var(--hero-void)] text-[var(--hero-cream)]"
+      id="hero"
+      className={`relative flex min-h-svh flex-col justify-center overflow-hidden ${GUTTER} py-[clamp(24px,6vw,96px)]`}
     >
-      <Spotlight />
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute left-[10%] top-[-30%] h-[70vw] w-[70vw] animate-drift"
+          style={{
+            background:
+              "radial-gradient(circle,color-mix(in srgb,var(--ac) 9%,transparent) 0%,transparent 60%)",
+          }}
+        />
+        <div className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-white/[0.07] to-transparent" />
+      </div>
 
-      <div className="absolute inset-y-0 right-0 -z-10 w-full md:right-[-4%] md:w-[48%]">
+      {/* The blob sits behind the copy, biased right so the left-aligned text stays clear of it. */}
+      <div className="pointer-events-none absolute inset-y-0 right-[-6%] z-0 w-full opacity-60 md:w-[40%]">
         {canRender3D && !reduced ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
@@ -112,65 +105,54 @@ export function Hero() {
         )}
       </div>
 
-      {/* max-w is the shared 72rem measure plus this element's own 5rem of padding: every other
-          section pads the <section> and centres a bare 72rem box inside, so matching that here is
-          what lines the hero up with the labels below it. */}
-      <div className="mx-auto flex min-h-svh w-full max-w-[77rem] flex-col justify-center px-6 py-24 sm:px-10">
-        <p
-          data-rise
-          className="flex items-center gap-3 font-mono text-[0.65rem] uppercase tracking-[0.3em] text-[var(--hero-sage)]"
-        >
-          <span className="relative flex size-1.5">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--hero-amber)] opacity-70" />
-            <span className="relative inline-flex size-1.5 rounded-full bg-[var(--hero-amber)]" />
-          </span>
-          {profile.availableForWork ? "Available for work" : "Currently booked"}
-        </p>
-
-        <h1 className="mt-7 max-w-[10ch] font-display text-[clamp(2.7rem,8.4vw,7rem)] font-extrabold leading-[0.84] tracking-[-0.045em]">
-          <NameLetters text={profile.name} />
-        </h1>
-
-        <div
-          data-rise
-          className="mt-8 flex items-baseline gap-3 font-mono text-sm tracking-tight text-[var(--hero-cream)] sm:text-base"
-        >
-          <span aria-hidden className="text-[var(--hero-amber)]">
-            &gt;
-          </span>
-          <span className="sr-only">{profile.roles.join(", ")}</span>
-          <span aria-hidden className="contents">
-            <WordRotate words={profile.roles} className="whitespace-nowrap" />
-          </span>
-          <span aria-hidden className="ml-1 inline-block h-[1.05em] w-[0.5em] animate-[blink_1.1s_steps(1,end)_infinite] bg-[var(--hero-amber)]" />
+      <div className={`relative z-[2] ${CONTENT}`}>
+        <div className="mb-[clamp(20px,3vh,36px)] flex items-center gap-2.5 text-[13px] uppercase tracking-[0.22em] text-[var(--muted)]">
+          <span className="size-2 rounded-full bg-[var(--ac)] shadow-[0_0_12px_var(--ac)]" />
+          <span>{profile.availability}</span>
         </div>
 
-        <p data-rise className="mt-7 max-w-[46ch] text-pretty text-[var(--hero-sage)] sm:text-lg">
+        <h1 className="m-0 font-display text-[clamp(28px,8.4vw,128px)] font-extrabold uppercase leading-[0.94] tracking-[-0.02em]">
+          <SplitLine text="Prithviraj" base={0} />
+          <SplitLine text="Panda" base={0.45} className="stroke-fg" />
+        </h1>
+
+        <div className="mt-[clamp(20px,3vh,36px)] flex flex-wrap items-baseline gap-3.5 text-[clamp(17px,2vw,24px)]">
+          <span className="text-[var(--muted)]">I build</span>
+          <span className="sr-only">{profile.roles.join(", ")}</span>
+          <span aria-hidden className="contents">
+            <WordRotate words={profile.roles} />
+          </span>
+        </div>
+
+        <p className="mt-[18px] max-w-[52ch] text-pretty text-[clamp(15px,1.4vw,18px)] leading-[1.7] text-[var(--muted)]">
           {profile.tagline}
         </p>
 
-        <div data-rise className="mt-11">
-          <MagneticButton href={WORK_HREF}>
-            <span className="size-1.5 rounded-full bg-[var(--hero-amber)] shadow-[0_0_10px_2px_var(--hero-amber)]" />
-            View work
+        <div className="mt-[clamp(28px,4vh,48px)] flex flex-wrap gap-4">
+          <MagneticButton
+            href="#projects"
+            className="bg-[var(--ac)] px-[34px] py-[18px] font-semibold tracking-[0.04em] text-[var(--bg)] transition-shadow duration-300 hover:shadow-[0_0_40px_color-mix(in_srgb,var(--ac)_45%,transparent)]"
+          >
+            View work <span aria-hidden>→</span>
+          </MagneticButton>
+          <MagneticButton
+            href="#contact"
+            className="border border-white/20 px-[34px] py-[18px] font-medium tracking-[0.04em] text-[var(--fg)] transition-colors duration-300 hover:border-[var(--ac)] hover:text-[var(--ac)]"
+          >
+            Get in touch
           </MagneticButton>
         </div>
       </div>
 
       <a
-        href={WORK_HREF}
-        className="group absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 font-mono text-[0.6rem] uppercase tracking-[0.3em] text-[var(--hero-sage)] transition-colors hover:text-[var(--hero-amber)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--hero-amber)]"
+        href="#about"
+        className="absolute bottom-7 left-1/2 z-[2] flex -translate-x-1/2 flex-col items-center gap-2 text-[12px] uppercase tracking-[0.25em] text-[var(--muted)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
       >
-        <span className="h-12 w-px bg-gradient-to-b from-transparent via-[var(--hero-sage)] to-[var(--hero-amber)]" />
-        <span className="flex items-center gap-2">
-          Scroll <ArrowDown className="size-3" />
+        <span>Scroll</span>
+        <span aria-hidden className="inline-block animate-bob">
+          ↓
         </span>
       </a>
-
-      {/* Anchors the empty bottom-right corner with real information rather than decoration. */}
-      <p className="absolute bottom-9 right-6 hidden font-mono text-[0.6rem] uppercase tracking-[0.28em] text-[var(--hero-sage)] sm:right-10 md:block">
-        {profile.location}
-      </p>
     </section>
   );
 }

@@ -1,204 +1,53 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
+/* Dark-only by decision: the design defines no light palette, so the theme toggle and every
+   light-mode variable are gone rather than invented. */
 :root {
-  --radius: 0.625rem;
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --ac: #cdff57;
+  --bg: #0a0a0a;
+  --fg: #e9e9e4;
+  --muted: #9a9a92;
+  /* Design value is #5c5c55, which measures 2.93:1 on the background — just under the 3:1 WCAG
+     floor for large text. Four values lighter clears it at 3.09:1 and is indistinguishable. */
+  --dim: #605f58;
+  --node: #1c1c1a;
+  --line: rgba(255, 255, 255, 0.08);
+  --hair: rgba(255, 255, 255, 0.14);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-ac: var(--ac);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
   --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-  --font-display: var(--font-display);
-  --animate-marquee: marquee var(--duration, 40s) linear infinite;
-}
-
-@keyframes marquee {
-  to {
-    transform: translateX(calc(-100% - var(--gap)));
-  }
-}
-
-/* Animista-style: chips bounce in sequence when their card is hovered. --i carries the index so
-   one rule staggers the whole row without a keyframe per chip. */
-@keyframes tech-pop {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  45% {
-    transform: translateY(-6px) scale(1.06);
-  }
-  72% {
-    transform: translateY(2px) scale(0.99);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-.group:hover .tech-chip {
-  animation: tech-pop 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  animation-delay: calc(var(--i, 0) * 55ms);
-}
-
-/* --- Hero: amber-phosphor palette -------------------------------------- */
-:root {
-  --hero-void: #f7f2e8;
-  --hero-deep: #efe6d5;
-  --hero-cream: #16110b;
-  --hero-sage: #6c6455;
-  --hero-amber: #c8791a;
-  --hero-ember: #a8410f;
-  --hero-teal: #2f7a72;
-}
-
-.dark {
-  --hero-void: #070c0c;
-  --hero-deep: #0b1413;
-  --hero-cream: #efe7d7;
-  --hero-sage: #7d908c;
-  --hero-amber: #ffb627;
-  --hero-ember: #ff7a18;
-  --hero-teal: #2f9e93;
-}
-
-/* The signature: a phosphor bloom travelling through the letterforms. `background-clip: text` on the
-   heading can't paint through the overflow:hidden letter masks, so GSAP staggers --glow per letter
-   instead and this rule turns that number into colour. */
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  50.01%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.name-letter {
-  --glow: 0;
-  color: color-mix(in oklab, var(--hero-cream), var(--hero-amber) calc(var(--glow) * 100%));
-  text-shadow: 0 0 calc(var(--glow) * 28px) color-mix(in oklab, var(--hero-amber) calc(var(--glow) * 55%), transparent);
+  --color-dim: var(--dim);
+  --font-display: var(--font-syne);
+  --font-sans: var(--font-grotesk);
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-drift: drift 16s ease-in-out infinite;
+  --animate-bob: bob 2s ease-in-out infinite;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  html {
+    scroll-behavior: smooth;
   }
   body {
-    @apply antialiased bg-background text-foreground;
+    @apply bg-[var(--bg)] text-[var(--fg)] antialiased;
   }
-  /* Lenis needs the native scrollbar out of the way of its rAF loop */
+  ::selection {
+    background: var(--ac);
+    color: var(--bg);
+  }
+  /* The custom cursor replaces the system one, but only where there is one to replace. */
+  @media (pointer: fine) {
+    body,
+    a,
+    button {
+      cursor: none;
+    }
+  }
+  /* Lenis needs the native scrollbar out of the way of its rAF loop. */
   html.lenis,
   html.lenis body {
     height: auto;
@@ -206,9 +55,104 @@
   .lenis.lenis-smooth {
     scroll-behavior: auto !important;
   }
-  html {
-    @apply font-sans;
+}
+
+/* --- design keyframes ------------------------------------------------- */
+
+@keyframes letterUp {
+  from {
+    opacity: 0;
+    transform: translateY(115%) rotate(5deg);
   }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Two identical role keyframes so alternating between them restarts the animation on every
+   swap — same trick the prototype uses, since re-running one animation needs a name change. */
+@keyframes roleA {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes roleB {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* -50%, not -100%: the strip renders exactly two copies, so half a loop is one full cycle. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+  50% {
+    transform: translate(6%, 8%) scale(1.15);
+  }
+  100% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+/* Gradient border: the panel paints over padding-box, the gradient over border-box, so the 1px
+   border is the only place the gradient shows. */
+.gborder {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)) padding-box,
+    linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04) 45%, color-mix(in srgb, var(--ac) 30%, transparent))
+      border-box;
+}
+.gborder-flip {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)) padding-box,
+    linear-gradient(160deg, color-mix(in srgb, var(--ac) 30%, transparent), rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.22))
+      border-box;
+}
+.gborder-plain {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)) padding-box,
+    linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04)) border-box;
+}
+
+/* Outlined display type — "Panda" in the hero, "something" in the contact headline. */
+.stroke-fg {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(233, 233, 228, 0.85);
+}
+.stroke-ac {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--ac);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -220,9 +164,16 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  /* The blanket rule above would fast-forward the marquee to its end transform, leaving the strip
-     shifted. Cancel it outright so the logos just sit still. */
+  /* The blanket rule fast-forwards the marquee to its end transform, leaving the strip shifted
+     half a cycle. Cancel it outright so the words just sit still. */
   .animate-marquee {
     animation: none !important;
+  }
+  @media (pointer: fine) {
+    body,
+    a,
+    button {
+      cursor: auto;
+    }
   }
 }
