@@ -8,6 +8,10 @@ export const profile = {
   availability: "Available for opportunities · India",
   // Handles confirmed by the user; the design's placeholder links and hello@ address are not used.
   email: "prithvi.new004@gmail.com",
+  // TODO(prithviraj): drop a PDF at public/resume.pdf and set this to "/resume.pdf".
+  // Left empty on purpose — the command palette hides "Download resume" while it is, rather
+  // than offering a link that 404s.
+  resumeUrl: "",
   tagline:
     "Full-stack software engineer with 1.5+ years shipping SaaS products end to end — Next.js and React up front, Node and TypeScript underneath.",
   // Cycled after "I build" in the hero.
@@ -22,6 +26,15 @@ export const profile = {
   aboutBody:
     "Since 2024 I've been building SaaS products across the whole stack: designing schemas, wiring auth, tuning queries, and obsessing over the last 10% of the UI. I like small teams, quick iterations, and owning features from first sketch to production.",
 };
+
+/** Drives both the navbar and the command palette, so the two can never drift apart. */
+export const sections = [
+  { id: "about", label: "About", n: "01" },
+  { id: "skills", label: "Stack", n: "02" },
+  { id: "experience", label: "Experience", n: "03" },
+  { id: "projects", label: "Work", n: "04" },
+  { id: "contact", label: "Contact", n: "05" },
+] as const;
 
 export const socials = [
   { label: "GitHub", href: "https://github.com/prithvinew004" },

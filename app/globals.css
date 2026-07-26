@@ -32,6 +32,11 @@
   html {
     scroll-behavior: smooth;
   }
+  /* The fixed nav is 3.5rem tall, so anchor jumps and palette navigation would otherwise
+     land with the section's first line tucked underneath it. */
+  section[id] {
+    scroll-margin-top: 3.5rem;
+  }
   body {
     @apply bg-[var(--bg)] text-[var(--fg)] antialiased;
   }

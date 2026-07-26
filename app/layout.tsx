@@ -5,6 +5,8 @@ import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { Cursor } from "@/components/animations/cursor";
 import { Grain } from "@/components/ui/grain";
 import { PageShell } from "@/components/page-shell";
+import { Nav } from "@/components/nav";
+import { CommandPalette } from "@/components/command-palette";
 import { profile } from "@/content/resume";
 
 // No `weight`: that pins static instances, and the hero's weight ramp needs the wght axis to
@@ -55,6 +57,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Grain />
         <Cursor />
         <PageShell>
+          <Nav />
+          <CommandPalette />
           <SmoothScroll>{children}</SmoothScroll>
         </PageShell>
       </body>
