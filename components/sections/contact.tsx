@@ -1,5 +1,6 @@
 import { contact, profile, socials } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
+import { SectionCurtain } from "@/components/animations/section-curtain";
 import { DecryptText } from "@/components/animations/decrypt-text";
 import { RollLabel } from "@/components/ui/roll-label";
 import { MagneticButton } from "@/components/ui/magnetic-button";
@@ -12,6 +13,7 @@ export function Contact() {
       id="contact"
       className={`relative border-t border-white/[0.07] ${GUTTER} pb-10 pt-[clamp(100px,16vh,200px)]`}
     >
+      <SectionCurtain />
       <div
         aria-hidden
         className="pointer-events-none absolute bottom-[-20%] left-[30%] h-[40vw] w-[60vw]"
@@ -25,7 +27,7 @@ export function Contact() {
         Contact
       </SectionLabel>
 
-      <Reveal>
+      <Reveal from="right">
         <h2 className="relative m-0 font-display text-[clamp(40px,7.6vw,124px)] font-extrabold uppercase leading-[0.98] tracking-[-0.02em]">
           <DecryptText text={contact.heading[0]} />
           <br />

@@ -1,5 +1,6 @@
 import { skills, marqueeStack } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
+import { SectionCurtain } from "@/components/animations/section-curtain";
 import { Marquee } from "@/components/ui/marquee";
 import { SkillCard } from "@/components/sections/skill-card";
 import { SectionLabel } from "@/components/ui/section-label";
@@ -11,6 +12,7 @@ import { cn } from "@/lib/utils";
 export function Skills() {
   return (
     <section id="skills" className="relative pt-[clamp(60px,10vh,140px)]">
+      <SectionCurtain />
       <div className={GUTTER}>
         <SectionLabel n="02" className="mb-9">
           Stack
@@ -22,6 +24,7 @@ export function Skills() {
             <Reveal
               key={s.group}
               delay={i % 2 ? 80 : 0}
+              from={i % 2 ? "right" : "left"}
               className={cn("h-full", "wide" in s && s.wide && "md:col-span-2")}
             >
               <SkillCard card={s} index={i} last={i === skills.length - 1} />

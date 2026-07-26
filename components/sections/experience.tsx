@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { experience, experienceIntro } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
+import { SectionCurtain } from "@/components/animations/section-curtain";
 import { BlurWords } from "@/components/animations/blur-words";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER, SECTION_Y, CONTENT } from "@/lib/section";
@@ -66,6 +67,7 @@ export function Experience() {
 
   return (
     <section ref={scope} id="experience" className={`relative ${GUTTER} ${SECTION_Y}`}>
+      <SectionCurtain />
       <div className={cn("grid grid-cols-1 gap-[clamp(32px,6vw,90px)] lg:grid-cols-[1fr_1.4fr]", CONTENT)}>
         <div>
           {/* Sticky only where there are two columns — on one column it would pin over the list. */}
@@ -122,6 +124,7 @@ export function Experience() {
                 />
                 <Reveal
                   delay={i * 60}
+                  from={i % 2 ? "right" : "left"}
                   className={i < experience.length - 1 ? "pb-[clamp(48px,8vh,90px)]" : undefined}
                 >
                   <div className="mb-2.5 text-[13px] uppercase tracking-[0.18em] text-[var(--ac)]">
