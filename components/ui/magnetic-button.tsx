@@ -62,6 +62,8 @@ export function MagneticButton({
       {...(external ? { target: "_blank", rel: "noreferrer noopener" } : null)}
       style={enabled ? { x: sx, y: sy } : undefined}
       data-hot={hot || undefined}
+      // Opts this element into the custom cursor's spring-snap.
+      data-cursor="snap"
       onBlur={() => {
         x.set(0);
         y.set(0);

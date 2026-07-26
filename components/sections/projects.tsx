@@ -176,6 +176,7 @@ export function Projects() {
             <div
               key={p.title}
               data-card
+              data-cursor="view"
               className="motion-safe:absolute motion-safe:inset-0 motion-reduce:relative motion-reduce:h-[520px]"
             >
               <Card project={p} />
