@@ -8,7 +8,7 @@ import { useMediaQuery, useReducedMotion } from "@/hooks/use-media-query";
 import { useAppReady } from "@/components/page-shell";
 import { WordRotate } from "@/components/ui/word-rotate";
 import { MagneticButton } from "@/components/ui/magnetic-button";
-import { ScrambleLabel } from "@/components/animations/scramble-text";
+import { RollLabel } from "@/components/ui/roll-label";
 import { GUTTER, CONTENT } from "@/lib/section";
 
 // ssr:false keeps three.js out of the server render and out of the initial chunk. The gradient
@@ -214,15 +214,15 @@ export function Hero() {
         <div style={rise(3)} className="mt-[clamp(28px,4vh,48px)] flex flex-wrap gap-4">
           <MagneticButton
             href="#projects"
-            className="bg-[var(--ac)] px-[34px] py-[18px] font-semibold tracking-[0.04em] text-[var(--bg)] transition-shadow duration-300 hover:shadow-[0_0_40px_color-mix(in_srgb,var(--ac)_45%,transparent)]"
+            className="bg-[var(--ac)] px-[34px] py-[18px] font-semibold tracking-[0.04em] text-[var(--bg)] transition-shadow duration-[--dur] ease-[--ease] hover:shadow-[0_0_40px_color-mix(in_srgb,var(--ac)_45%,transparent)]"
           >
-            <ScrambleLabel text="View work" /> <span aria-hidden>→</span>
+            <RollLabel text="View work" /> <span aria-hidden>→</span>
           </MagneticButton>
           <MagneticButton
             href="#contact"
-            className="border border-white/20 px-[34px] py-[18px] font-medium tracking-[0.04em] text-[var(--fg)] transition-colors duration-300 hover:border-[var(--ac)] hover:text-[var(--ac)]"
+            className="border border-white/20 px-[34px] py-[18px] font-medium tracking-[0.04em] text-[var(--fg)] transition-colors duration-[--dur] ease-[--ease] hover:border-[var(--ac)] hover:text-[var(--ac)]"
           >
-            <ScrambleLabel text="Get in touch" />
+            <RollLabel text="Get in touch" />
           </MagneticButton>
         </div>
       </div>

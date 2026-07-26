@@ -31,7 +31,7 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-[--dur] ease-[--ease]",
         GUTTER,
         // Transparent over the hero, glass once past it — the same glass as the palette.
         scrolled &&
@@ -44,7 +44,7 @@ export function Nav() {
       >
         <a
           href="#hero"
-          className="font-display text-sm font-bold tracking-tight text-[var(--fg)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
+          className="font-display text-sm font-bold tracking-tight text-[var(--fg)] transition-colors duration-[--dur] ease-[--ease] hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
         >
           PP
           <span className="sr-only">Prithviraj Panda — back to top</span>
@@ -55,7 +55,7 @@ export function Nav() {
             <li key={s.id}>
               <a
                 href={`#${s.id}`}
-                className="text-[13px] uppercase tracking-[0.14em] text-[var(--muted)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
+                className="ul-draw text-[13px] uppercase tracking-[0.14em] text-[var(--muted)] transition-colors duration-[--dur] ease-[--ease] hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
               >
                 <ScrambleLabel text={s.label} />
               </a>

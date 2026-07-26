@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { projects } from "@/content/resume";
 import { TiltCard } from "@/components/ui/tilt-card";
-import { ScrambleLabel } from "@/components/animations/scramble-text";
+import { TiltPill } from "@/components/ui/tilt-pill";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER, SECTION_Y, CONTENT } from "@/lib/section";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,8 @@ const STEP = 1; // spacing between transitions; the gap above XFADE is the dwell
 
 function Card({ project }: { project: (typeof projects)[number] }) {
   return (
-    <TiltCard className="gborder group flex h-full flex-col transition-shadow duration-500 hover:shadow-[0_24px_70px_-40px_var(--ac)]">
+    // glow-border on the card itself — TiltCard's own pointer handler feeds it --mx/--my.
+    <TiltCard className="gborder glow-border group flex h-full flex-col [transition:box-shadow_var(--dur)_var(--ease)] hover:shadow-[0_24px_70px_-40px_var(--ac)]">
       {/* flex-1 + min-h-0 lets the media band absorb the leftover height, so the card fits whatever
           the pinned stage gives it rather than forcing the section taller than the viewport. */}
       <div className="m-3.5 flex min-h-0 flex-1 items-center justify-center rounded-[14px] bg-[repeating-linear-gradient(135deg,rgba(255,255,255,.045)_0_10px,transparent_10px_22px)] font-mono text-xs tracking-[0.1em] text-[var(--muted)]">
@@ -32,22 +33,22 @@ function Card({ project }: { project: (typeof projects)[number] }) {
         </p>
         <ul className="mb-5 flex flex-wrap gap-2">
           {project.stack.map((tech) => (
-            <li
+            <TiltPill
               key={tech}
-              className="rounded-full border border-white/[0.12] px-3 py-[5px] text-xs text-[var(--muted)]"
+              className="rounded-full border border-white/[0.12] px-3 py-[5px] text-xs text-[var(--muted)] [transition:transform_var(--dur)_var(--ease),border-color_var(--dur)_var(--ease)] hover:border-[var(--ac)]/50"
             >
               {tech}
-            </li>
+            </TiltPill>
           ))}
         </ul>
         <a
           href={project.href}
-          className="inline-block border-b border-[var(--ac)] pb-[3px] text-[13px] uppercase tracking-[0.14em] text-[var(--fg)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
+          className="ul-draw relative inline-block pb-[3px] text-[13px] uppercase tracking-[0.14em] text-[var(--fg)] [transition:color_var(--dur)_var(--ease)] hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
         >
-          <ScrambleLabel text="Case study" />{" "}
+          Case study{" "}
           <span
             aria-hidden
-            className="inline-block transition-transform duration-500 group-hover:translate-x-1"
+            className="inline-block [transition:transform_var(--dur)_var(--ease)] group-hover:translate-x-1"
           >
             →
           </span>
@@ -157,7 +158,7 @@ export function Projects() {
             <span
               key={p.n}
               className={cn(
-                "h-px flex-1 transition-colors duration-500",
+                "h-px flex-1 transition-colors duration-[--dur] ease-[--ease]",
                 i <= active ? "bg-[var(--ac)]" : "bg-white/15"
               )}
             />
@@ -173,12 +174,19 @@ export function Projects() {
             "motion-reduce:flex motion-reduce:flex-col motion-reduce:gap-6"
           )}
         >
-          {projects.map((p) => (
+          {projects.map((p, i) => (
             <div
               key={p.title}
               data-card
               data-cursor="view"
-              className="motion-safe:absolute motion-safe:inset-0 motion-reduce:relative motion-reduce:h-[520px]"
+              className={cn(
+                "motion-safe:absolute motion-safe:inset-0 motion-reduce:relative motion-reduce:h-[520px]",
+                // Faded cards keep opacity 0 but stay hit-testable, so the topmost one swallows
+                // every pointer event meant for the visible card — that silently killed the tilt,
+                // the glow and the Case study link. Only gated in motion-safe: under reduced
+                // motion the cards sit in normal flow and all three must stay interactive.
+                i !== active && "motion-safe:pointer-events-none"
+              )}
             >
               <Card project={p} />
             </div>

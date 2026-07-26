@@ -1,7 +1,7 @@
 import { contact, profile, socials } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
 import { DecryptText } from "@/components/animations/decrypt-text";
-import { ScrambleLabel } from "@/components/animations/scramble-text";
+import { RollLabel } from "@/components/ui/roll-label";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER } from "@/lib/section";
@@ -41,9 +41,9 @@ export function Contact() {
             <MagneticButton
               href={s.href}
               external={s.href.startsWith("http")}
-              className="border border-white/20 px-[38px] py-5 tracking-[0.06em] text-[var(--fg)] transition-all duration-300 hover:border-[var(--ac)] hover:bg-[var(--ac)] hover:text-[var(--bg)]"
+              className="border border-white/20 px-[38px] py-5 tracking-[0.06em] text-[var(--fg)] transition-all duration-[--dur] ease-[--ease] hover:border-[var(--ac)] hover:bg-[var(--ac)] hover:text-[var(--bg)]"
             >
-              <ScrambleLabel text={s.label} /> <span aria-hidden>→</span>
+              <RollLabel text={s.label} /> <span aria-hidden>→</span>
               {s.href.startsWith("http") && <span className="sr-only">(opens in a new tab)</span>}
             </MagneticButton>
           </li>
@@ -57,9 +57,9 @@ export function Contact() {
         <span>{contact.footerNote}</span>
         <a
           href="#hero"
-          className="text-[var(--muted)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
+          className="ul-draw text-[var(--muted)] transition-colors duration-[--dur] ease-[--ease] hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
         >
-          <ScrambleLabel text="Back to top" /> <span aria-hidden>↑</span>
+          Back to top <span aria-hidden>↑</span>
         </a>
       </div>
     </section>

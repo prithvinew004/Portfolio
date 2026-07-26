@@ -26,6 +26,10 @@ export function TiltCard({ children, className }: { children: React.ReactNode; c
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
     el.style.transform = `rotateY(${px * MAX_TILT}deg) rotateX(${-py * MAX_TILT}deg)`;
+    // Feeds `.glow-border` when the caller opts in. Set here rather than on the glow layer
+    // itself: that layer is pointer-events-none, so it can never receive a move event.
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
     if (glare.current) {
       glare.current.style.background = `radial-gradient(420px circle at ${(px + 0.5) * 100}% ${
         (py + 0.5) * 100
@@ -47,6 +51,8 @@ export function TiltCard({ children, className }: { children: React.ReactNode; c
       // transform-style + the parent's perspective are what make the rotation read as depth
       // rather than a skew.
       className={cn(
+        // 150ms, not the shared --dur: this transition smooths continuous cursor *tracking*
+        // rather than a discrete hover state, and at 250ms the card visibly lags the pointer.
         "relative h-full overflow-hidden rounded-[22px] [transform-style:preserve-3d] transition-transform duration-150 ease-out",
         className
       )}

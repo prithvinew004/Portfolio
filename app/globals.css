@@ -12,6 +12,10 @@
   --dim: #605f58;
   --node: #1c1c1a;
   --line: rgba(255, 255, 255, 0.08);
+  /* One timing for every micro-interaction. The curve is the design's own reveal easing, so
+     hovers decelerate the same way the page's entrances do. */
+  --dur: 250ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --hair: rgba(255, 255, 255, 0.14);
 }
 
@@ -236,6 +240,90 @@
   }
 }
 
+/* --- micro-interactions --------------------------------------------------
+
+   Roll-up: the label and an identical copy stacked in an overflow-hidden box. On hover the pair
+   slides one line height, so the original leaves upward as the copy arrives from below. The copy is
+   aria-hidden — a screen reader should hear the label once, not twice. */
+.roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.roll > span {
+  display: block;
+  transition: transform var(--dur) var(--ease);
+}
+.roll > span:last-child {
+  position: absolute;
+  inset: 0;
+  transform: translateY(100%);
+}
+.group:hover .roll > span:first-child,
+.group:focus-visible .roll > span:first-child {
+  transform: translateY(-100%);
+}
+.group:hover .roll > span:last-child,
+.group:focus-visible .roll > span:last-child {
+  transform: translateY(0);
+}
+
+/* Underline draws left to right, and retracts back to the left on leave. */
+.ul-draw {
+  position: relative;
+}
+.ul-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+.ul-draw:hover::after,
+.ul-draw:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Radial glow that follows the cursor along the border only. The gradient is painted into a 1px
+   ring by masking the padding box out of the border box — no second element, no layout cost.
+   --mx/--my are written by useCursorGlow. */
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    180px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--ac) 65%, transparent),
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+  pointer-events: none;
+}
+.glow-border:hover::before,
+.glow-border:focus-within::before {
+  opacity: 1;
+}
+
 /* Outlined display type — "Panda" in the hero, "something" in the contact headline. */
 .stroke-fg {
   color: transparent;
@@ -259,6 +347,13 @@
      half a cycle. Cancel it outright so the words just sit still. */
   .animate-marquee {
     animation: none !important;
+  }
+  /* The roll-up would otherwise snap; show the original label and never move it. */
+  .roll > span:last-child {
+    display: none;
+  }
+  .ul-draw::after {
+    transform: scaleX(1);
   }
   @media (pointer: fine) {
     body,

@@ -69,7 +69,8 @@ export function MagneticButton({
         y.set(0);
       }}
       className={cn(
-        "inline-flex items-center gap-2.5 rounded-full text-[15px] uppercase",
+        // `group` so RollLabel can key its slide off the whole button, not just the text.
+        "group inline-flex items-center gap-2.5 rounded-full text-[15px] uppercase",
         "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]",
         className
       )}

@@ -1,6 +1,7 @@
 import { skills, marqueeStack } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
 import { Marquee } from "@/components/ui/marquee";
+import { SkillCard } from "@/components/sections/skill-card";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER, CONTENT } from "@/lib/section";
 import { cn } from "@/lib/utils";
@@ -23,28 +24,7 @@ export function Skills() {
               delay={i % 2 ? 80 : 0}
               className={cn("h-full", "wide" in s && s.wide && "md:col-span-2")}
             >
-              <div
-                className={cn(
-                  "group h-full rounded-[20px] p-8",
-                  // The last card flips the gradient so the accent sits on the outer edge,
-                  // mirroring the first — the two wide cards bookend the grid.
-                  i === skills.length - 1 ? "gborder-flip" : i === 0 ? "gborder" : "gborder-plain"
-                )}
-              >
-                <div className="mb-2 font-display text-2xl font-bold">{s.group}</div>
-                <div className="mb-[22px] text-sm text-[var(--muted)]">{s.blurb}</div>
-                <ul className="flex flex-wrap gap-2.5">
-                  {s.items.map((item, j) => (
-                    <li
-                      key={item}
-                      style={{ "--i": j } as React.CSSProperties}
-                      className="tech-chip rounded-full border border-[var(--hair)] px-4 py-2 text-sm transition-all duration-[250ms] hover:border-[var(--ac)] hover:text-[var(--ac)]"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <SkillCard card={s} index={i} last={i === skills.length - 1} />
             </Reveal>
           ))}
         </div>
