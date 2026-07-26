@@ -7,7 +7,9 @@ import { Grain } from "@/components/ui/grain";
 import { PageShell } from "@/components/page-shell";
 import { profile } from "@/content/resume";
 
-const syne = Syne({ subsets: ["latin"], weight: ["700", "800"], variable: "--font-syne" });
+// No `weight`: that pins static instances, and the hero's weight ramp needs the wght axis to
+// interpolate. Omitting it makes next/font fetch the variable font, which also serves 700/800.
+const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 const grotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["400", "500", "600"],

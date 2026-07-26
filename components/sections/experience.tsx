@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { experience, experienceIntro } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
+import { BlurWords } from "@/components/animations/blur-words";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER, SECTION_Y, CONTENT } from "@/lib/section";
 import { cn } from "@/lib/utils";
@@ -76,9 +77,9 @@ export function Experience() {
                 the narrower left column broke it again mid-phrase into three lines. */}
             <h2 className="m-0 font-display text-[clamp(30px,4vw,56px)] font-extrabold leading-[1.05] tracking-[-0.01em]">
               {experienceIntro.heading.map((line) => (
-                <span key={line} className="block whitespace-nowrap">
-                  {line}
-                </span>
+                // One BlurWords per line so the design's break after "Where I've" survives; each
+                // line stays nowrap so the narrow left column can't re-break it mid-phrase.
+                <BlurWords key={line} text={line} className="m-0 block whitespace-nowrap" />
               ))}
             </h2>
             <p className="mt-5 max-w-[34ch] text-pretty text-[15px] leading-[1.7] text-[var(--muted)]">

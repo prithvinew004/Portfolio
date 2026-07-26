@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { projects } from "@/content/resume";
 import { TiltCard } from "@/components/ui/tilt-card";
+import { ScrambleLabel } from "@/components/animations/scramble-text";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER, SECTION_Y, CONTENT } from "@/lib/section";
 import { cn } from "@/lib/utils";
@@ -43,7 +44,7 @@ function Card({ project }: { project: (typeof projects)[number] }) {
           href={project.href}
           className="inline-block border-b border-[var(--ac)] pb-[3px] text-[13px] uppercase tracking-[0.14em] text-[var(--fg)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
         >
-          Case study{" "}
+          <ScrambleLabel text="Case study" />{" "}
           <span
             aria-hidden
             className="inline-block transition-transform duration-500 group-hover:translate-x-1"

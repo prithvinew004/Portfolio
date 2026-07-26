@@ -1,6 +1,7 @@
 import { contact, profile, socials } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
 import { DecryptText } from "@/components/animations/decrypt-text";
+import { ScrambleLabel } from "@/components/animations/scramble-text";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { SectionLabel } from "@/components/ui/section-label";
 import { GUTTER } from "@/lib/section";
@@ -42,7 +43,7 @@ export function Contact() {
               external={s.href.startsWith("http")}
               className="border border-white/20 px-[38px] py-5 tracking-[0.06em] text-[var(--fg)] transition-all duration-300 hover:border-[var(--ac)] hover:bg-[var(--ac)] hover:text-[var(--bg)]"
             >
-              {s.label} <span aria-hidden>→</span>
+              <ScrambleLabel text={s.label} /> <span aria-hidden>→</span>
               {s.href.startsWith("http") && <span className="sr-only">(opens in a new tab)</span>}
             </MagneticButton>
           </li>
@@ -58,7 +59,7 @@ export function Contact() {
           href="#hero"
           className="text-[var(--muted)] transition-colors hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
         >
-          Back to top <span aria-hidden>↑</span>
+          <ScrambleLabel text="Back to top" /> <span aria-hidden>↑</span>
         </a>
       </div>
     </section>

@@ -1,13 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { profile } from "@/content/resume";
 import { useMediaQuery, useReducedMotion } from "@/hooks/use-media-query";
 import { useAppReady } from "@/components/page-shell";
 import { WordRotate } from "@/components/ui/word-rotate";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { ScrambleLabel } from "@/components/animations/scramble-text";
 import { GUTTER, CONTENT } from "@/lib/section";
 
 // ssr:false keeps three.js out of the server render and out of the initial chunk. The gradient
@@ -71,9 +72,56 @@ function SplitLine({ text, base, className }: { text: string; base: number; clas
   );
 }
 
+/** Syne's wght axis. Rest is the design's 800; the ramp only ever lightens, so a letter can never
+ *  grow past the width its box was pinned at. */
+const REST_WEIGHT = 800;
+const MIN_WEIGHT = 450;
+const REACH = 260; // px from the pointer at which a letter is back to full weight
+
 export function Hero() {
   const ready = useAppReady();
   const reduced = useReducedMotion();
+
+  const nameRef = useRef<HTMLHeadingElement>(null);
+
+  // Weight changes alter glyph advance widths, which would reflow the line — and the clamp is
+  // tuned so the name only just fits on one line, so that means clipping as well as layout shift.
+  // Pinning each letter at its rest width means the ramp only ever repaints inside a fixed box.
+  useEffect(() => {
+    const el = nameRef.current;
+    if (!el || reduced) return;
+    let cancelled = false;
+    // Wait for the webfont: measuring against the fallback pins the wrong widths.
+    document.fonts.ready.then(() => {
+      if (cancelled) return;
+      el.querySelectorAll<HTMLElement>("[data-letter]").forEach((l) => {
+        l.style.width = `${l.getBoundingClientRect().width}px`;
+        l.style.textAlign = "center";
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [reduced]);
+
+  // Written straight to style rather than through state: this fires on every pointermove, and a
+  // re-render per frame would be the expensive way to do the same thing.
+  function rampWeights(e: React.PointerEvent) {
+    const el = nameRef.current;
+    if (!el || reduced) return;
+    el.querySelectorAll<HTMLElement>("[data-letter]").forEach((l) => {
+      const r = l.getBoundingClientRect();
+      const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+      const t = Math.min(1, d / REACH);
+      l.style.fontWeight = String(Math.round(MIN_WEIGHT + (REST_WEIGHT - MIN_WEIGHT) * t));
+    });
+  }
+
+  function resetWeights() {
+    nameRef.current
+      ?.querySelectorAll<HTMLElement>("[data-letter]")
+      .forEach((l) => (l.style.fontWeight = ""));
+  }
 
   /** Staggered rise for the copy under the name, gated on the preloader like the letters. */
   const rise = (i: number) =>
@@ -134,7 +182,12 @@ export function Hero() {
           <span>{profile.availability}</span>
         </div>
 
-        <h1 className="m-0 font-display text-[clamp(28px,8.4vw,128px)] font-extrabold uppercase leading-[0.94] tracking-[-0.02em]">
+        <h1
+          ref={nameRef}
+          onPointerMove={rampWeights}
+          onPointerLeave={resetWeights}
+          className="m-0 w-fit font-display text-[clamp(28px,8.4vw,128px)] font-extrabold uppercase leading-[0.94] tracking-[-0.02em] [transition:none]"
+        >
           <SplitLine text="Prithviraj" base={0} className="name-solid" />
           <SplitLine text="Panda" base={0.45} className="stroke-fg name-outline" />
         </h1>
@@ -163,13 +216,13 @@ export function Hero() {
             href="#projects"
             className="bg-[var(--ac)] px-[34px] py-[18px] font-semibold tracking-[0.04em] text-[var(--bg)] transition-shadow duration-300 hover:shadow-[0_0_40px_color-mix(in_srgb,var(--ac)_45%,transparent)]"
           >
-            View work <span aria-hidden>→</span>
+            <ScrambleLabel text="View work" /> <span aria-hidden>→</span>
           </MagneticButton>
           <MagneticButton
             href="#contact"
             className="border border-white/20 px-[34px] py-[18px] font-medium tracking-[0.04em] text-[var(--fg)] transition-colors duration-300 hover:border-[var(--ac)] hover:text-[var(--ac)]"
           >
-            Get in touch
+            <ScrambleLabel text="Get in touch" />
           </MagneticButton>
         </div>
       </div>
