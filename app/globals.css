@@ -334,6 +334,105 @@
   -webkit-text-stroke: 1.5px var(--ac);
 }
 
+/* --- GitHub contribution graph -------------------------------------------------------------
+   Kibo ships shadcn's `fill-muted-foreground/40` ramp, which this theme never defined — those
+   classes resolve to nothing. Scoping by [data-level] instead of overriding each cell means the
+   legend keys get the same ramp for free. */
+/* Kibo sizes the calendar from a fixed blockSize, which leaves a third of the card empty on a
+   wide screen and overflows a narrow one. The svg carries a viewBox, so letting it scale to the
+   container instead makes the cells grow with the card; min-width keeps them tappable on mobile,
+   where the scroller takes over.
+
+   Scoped to .cg-cal, not .cg: the legend renders five one-block <svg> swatches of its own, and a
+   bare `.cg svg` stretched each of them to the 620px floor — 3000px of invisible legend. */
+.cg-cal svg {
+  width: 100%;
+  height: auto;
+  min-width: 620px;
+}
+
+.cg rect[data-level="0"] {
+  fill: rgba(255, 255, 255, 0.05);
+}
+.cg rect[data-level="1"] {
+  fill: color-mix(in srgb, var(--ac) 22%, transparent);
+}
+.cg rect[data-level="2"] {
+  fill: color-mix(in srgb, var(--ac) 42%, transparent);
+}
+.cg rect[data-level="3"] {
+  fill: color-mix(in srgb, var(--ac) 66%, transparent);
+}
+.cg rect[data-level="4"] {
+  fill: var(--ac);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hidden by default *only* here. Gating the hidden state on the same media query the JS reads
+     means a reduced-motion visitor sees a full graph from CSS alone — it can't depend on a class
+     that will never be added for them. */
+  .cg-cell {
+    opacity: 0;
+  }
+  .cg-cell.cg-play {
+    /* `both` holds the 0% frame through the per-cell delay, so the wave has something to sweep
+       into without the resting state being invisible. */
+    animation: cgWave 520ms var(--ease) both;
+  }
+}
+
+@keyframes cgWave {
+  from {
+    opacity: 0;
+    /* An SVG rect's transform-origin is the *viewport* origin by default, so a plain scale()
+       would fling every cell toward the top-left corner instead of growing in place. */
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.cg-cell {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* "Currently building" indicator: a solid dot with a ring breathing out of it. */
+.pulse-dot {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: var(--ac);
+}
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: pulseRing 2.4s ease-out infinite;
+}
+/* The globe's marker ring: same breath as .pulse-dot, on an SVG circle. */
+.globe-ping {
+  animation: pulseRing 2.4s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes pulseRing {
+  from {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

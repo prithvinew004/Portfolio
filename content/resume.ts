@@ -12,6 +12,12 @@ export const profile = {
   // Left empty on purpose — the command palette hides "Download resume" while it is, rather
   // than offering a link that 404s.
   resumeUrl: "",
+  // TODO(prithviraj): drop a portrait at public/prithviraj.jpg and set this to "/prithviraj.jpg".
+  // Empty hides the About portrait rather than rendering a broken image. LinkedIn's photo can't be
+  // fetched from the public profile (it sits behind the auth wall), so it has to be saved by hand.
+  photo: "",
+  /** Where the contact globe parks its marker. Centre of India until there's a city to pin. */
+  coords: { lat: 22.6, lon: 79 },
   tagline:
     "Full-stack software engineer with 1.5+ years shipping SaaS products end to end — Next.js and React up front, Node and TypeScript underneath.",
   // Cycled after "I build" in the hero.
@@ -25,20 +31,56 @@ export const profile = {
     "I turn ideas into shipped product — fast interfaces, clean APIs, and the small details that make software feel alive.",
   aboutBody:
     "Since 2024 I've been building SaaS products across the whole stack: designing schemas, wiring auth, tuning queries, and obsessing over the last 10% of the UI. I like small teams, quick iterations, and owning features from first sketch to production.",
+  /** Shown beside the pulsing dot in the Activity section. Keep it to one line and present tense. */
+  currentlyBuilding: "a charity subscription platform for golf clubs, and a set of browser-side developer toolkits.",
 };
 
-/** Drives both the navbar and the command palette, so the two can never drift apart. */
-export const sections = [
-  { id: "about", label: "About", n: "01" },
-  { id: "skills", label: "Stack", n: "02" },
-  { id: "experience", label: "Experience", n: "03" },
-  { id: "projects", label: "Work", n: "04" },
-  { id: "contact", label: "Contact", n: "05" },
-] as const;
+export const github = {
+  username: "prithvinew004",
+  /**
+   * Which repos get cards. Curated on purpose, not read from GitHub's "pinned" list: the pins on
+   * the profile are still the 2024 learning projects (PIG-GAME, CALCULATOR-, IOS-Calculator),
+   * and sorting by stars is no better on an account with one star total. Everything *shown* on
+   * the cards — description, language, stars — is fetched live; only this selection is fixed.
+   *
+   * Repin on github.com and this list can just mirror the new pins.
+   */
+  repos: ["GolfGives", "pdftoolkit", "devtoolkit"],
+} as const;
+
+export type Testimonial = {
+  name: string;
+  role: string;
+  quote: string;
+  /** Where the quote can be checked — a LinkedIn recommendation, usually. */
+  href?: string;
+};
+
+/**
+ * Real quotes only — a portfolio with invented praise costs more than one with none. While this is
+ * empty the section and its nav entry don't render at all.
+ */
+export const testimonials: Testimonial[] = [];
+
+const order = [
+  { id: "about", label: "About" },
+  { id: "skills", label: "Stack" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Work" },
+  ...(testimonials.length ? [{ id: "testimonials", label: "Kind words" }] : []),
+  { id: "activity", label: "Activity" },
+  { id: "contact", label: "Contact" },
+];
+
+/** Drives the navbar, the palette and every section eyebrow, so none of them can drift apart. */
+export const sections = order.map((s, i) => ({ ...s, n: String(i + 1).padStart(2, "0") }));
+
+/** The eyebrow number for a section id, derived from its position in `sections`. */
+export const sectionN = (id: string) => sections.find((s) => s.id === id)?.n ?? "";
 
 export const socials = [
   { label: "GitHub", href: "https://github.com/prithvinew004" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/prithvirajpanda" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/prithviraj-panda-707621225/" },
   { label: "Email", href: `mailto:${profile.email}` },
 ] as const;
 

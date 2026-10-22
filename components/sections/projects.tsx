@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { projects } from "@/content/resume";
+import { projects, sectionN } from "@/content/resume";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { TiltPill } from "@/components/ui/tilt-pill";
 import { SectionLabel } from "@/components/ui/section-label";
@@ -135,7 +135,7 @@ export function Projects() {
     >
       <div className={cn("w-full", CONTENT)}>
         <div className="flex items-end justify-between gap-6">
-          <SectionLabel n="04">Selected work</SectionLabel>
+          <SectionLabel n={sectionN("projects")}>Selected work</SectionLabel>
 
           {/* Meaningless when all three cards are on screen at once, so it's hidden in that mode. */}
           <div

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { experience, experienceIntro } from "@/content/resume";
+import { experience, experienceIntro, sectionN } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
 import { SectionCurtain } from "@/components/animations/section-curtain";
 import { BlurWords } from "@/components/animations/blur-words";
@@ -72,7 +72,7 @@ export function Experience() {
         <div>
           {/* Sticky only where there are two columns — on one column it would pin over the list. */}
           <div className="lg:sticky lg:top-[120px]">
-            <SectionLabel n="03" className="mb-6">
+            <SectionLabel n={sectionN("experience")} className="mb-6">
               Experience
             </SectionLabel>
             {/* Each line is nowrap so the design's break lands after "Where I've" — left to itself

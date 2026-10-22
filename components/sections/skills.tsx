@@ -1,4 +1,4 @@
-import { skills, marqueeStack } from "@/content/resume";
+import { skills, marqueeStack, sectionN } from "@/content/resume";
 import { Reveal } from "@/components/animations/reveal";
 import { SectionCurtain } from "@/components/animations/section-curtain";
 import { Marquee } from "@/components/ui/marquee";
@@ -14,7 +14,7 @@ export function Skills() {
     <section id="skills" className="relative pt-[clamp(60px,10vh,140px)]">
       <SectionCurtain />
       <div className={GUTTER}>
-        <SectionLabel n="02" className="mb-9">
+        <SectionLabel n={sectionN("skills")} className="mb-9">
           Stack
         </SectionLabel>
 

@@ -1,5 +1,3 @@
-Create a CLAUDE.md file with these project rules:
-
 # Portfolio — Prithviraj Panda
 - Next.js 15 App Router, TypeScript, Tailwind CSS v4, shadcn/ui on Radix
 - Animation: Framer Motion for component/page animations, GSAP + ScrollTrigger
