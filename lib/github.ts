@@ -29,8 +29,9 @@ export type Repo = {
  * A token is optional — it only raises the unauthenticated 60/hr limit, which a daily
  * revalidate is nowhere near.
  */
-function auth(): HeadersInit {
-  const token = process.env.GITHUB_TOKEN;
+function auth(url: string): HeadersInit {
+  // Only GitHub itself gets the token; the contributions mirror is a third party.
+  const token = new URL(url).hostname === "api.github.com" ? process.env.GITHUB_TOKEN : undefined;
   return {
     Accept: "application/vnd.github+json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -44,7 +45,7 @@ function auth(): HeadersInit {
  */
 async function safeJson<T>(url: string, init: RequestInit & { next: { revalidate: number } }) {
   try {
-    const res = await fetch(url, { ...init, headers: auth() });
+    const res = await fetch(url, { ...init, headers: auth(url) });
     if (!res.ok) {
       console.warn(`[github] ${url} -> ${res.status}; using fallback`);
       return null;
