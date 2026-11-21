@@ -1,187 +1,335 @@
-// Single source of truth for all copy. Content below comes from the Claude Design handoff
-// (Prithviraj Portfolio.dc.html) unless noted.
-
 export const profile = {
   name: "Prithviraj Panda",
-  role: "Full-Stack Software Engineer",
+  role: "Product-focused full-stack developer",
   location: "India",
-  availability: "Available for opportunities · India",
-  // Handles confirmed by the user; the design's placeholder links and hello@ address are not used.
+  availability: "",
   email: "prithvi.new004@gmail.com",
-  // TODO(prithviraj): drop a PDF at public/resume.pdf and set this to "/resume.pdf".
-  // Left empty on purpose — the command palette hides "Download resume" while it is, rather
-  // than offering a link that 404s.
   resumeUrl: "",
-  // TODO(prithviraj): drop a portrait at public/prithviraj.jpg and set this to "/prithviraj.jpg".
-  // Empty hides the About portrait rather than rendering a broken image. LinkedIn's photo can't be
-  // fetched from the public profile (it sits behind the auth wall), so it has to be saved by hand.
   photo: "",
-  /** Where the contact globe parks its marker. Centre of India until there's a city to pin. */
   coords: { lat: 22.6, lon: 79 },
+  offer:
+    "I turn product ideas into clear, usable web experiences—from interface and data model to the workflows that make them useful.",
   tagline:
-    "Full-stack software engineer with 1.5+ years shipping SaaS products end to end — Next.js and React up front, Node and TypeScript underneath.",
-  // Cycled after "I build" in the hero.
-  roles: [
-    "Full-Stack SaaS products",
-    "Next.js + React frontends",
-    "Node & TypeScript APIs",
-    "things that ship",
-  ],
-  aboutHeadline:
-    "I turn ideas into shipped product — fast interfaces, clean APIs, and the small details that make software feel alive.",
+    "Full-stack product development with React, Next.js, TypeScript, and practical backend systems.",
+  roles: ["product interfaces", "full-stack workflows", "browser-based tools", "ideas that ship"],
+  aboutHeadline: "Thoughtful product engineering, from first interaction to the supporting system.",
   aboutBody:
-    "Since 2024 I've been building SaaS products across the whole stack: designing schemas, wiring auth, tuning queries, and obsessing over the last 10% of the UI. I like small teams, quick iterations, and owning features from first sketch to production.",
-  /** Shown beside the pulsing dot in the Activity section. Keep it to one line and present tense. */
-  currentlyBuilding: "a charity subscription platform for golf clubs, and a set of browser-side developer toolkits.",
-};
+    "I work across interface, application logic, data, and delivery. My best work starts with a real workflow, removes unnecessary complexity, and leaves behind a product people can understand and use.",
+  currentlyBuilding: "product foundations, browser tools, and clearer ways to present real work.",
+} as const;
 
 export const github = {
   username: "prithvinew004",
-  /**
-   * Which repos get cards. Curated on purpose, not read from GitHub's "pinned" list: the pins on
-   * the profile are still the 2024 learning projects (PIG-GAME, CALCULATOR-, IOS-Calculator),
-   * and sorting by stars is no better on an account with one star total. Everything *shown* on
-   * the cards — description, language, stars — is fetched live; only this selection is fixed.
-   *
-   * Repin on github.com and this list can just mirror the new pins.
-   */
   repos: ["GolfGives", "pdftoolkit", "devtoolkit"],
 } as const;
 
-export type Testimonial = {
-  name: string;
-  role: string;
-  quote: string;
-  /** Where the quote can be checked — a LinkedIn recommendation, usually. */
-  href?: string;
+export type ProjectStatus =
+  | "deployed"
+  | "assignment"
+  | "prototype"
+  | "in-progress"
+  | "learning"
+  | "fork"
+  | "scaffold";
+
+export type ProjectEvidence = {
+  id: string;
+  n: string;
+  title: string;
+  status: ProjectStatus;
+  statusLabel: string;
+  summary: string;
+  contribution: string;
+  capabilities: readonly string[];
+  repoUrl?: string;
+  liveUrl?: string;
+  image: { src: string; alt: string };
+  verifiedOn: string;
+  excludedClaims: readonly string[];
+  featured: boolean;
 };
 
-/**
- * Real quotes only — a portfolio with invented praise costs more than one with none. While this is
- * empty the section and its nav entry don't render at all.
- */
-export const testimonials: Testimonial[] = [];
+export const projects = [
+  {
+    id: "curoh-dr-raja",
+    n: "01",
+    title: "Curoh · Dr Raja Neuro Care",
+    status: "deployed",
+    statusLabel: "Published healthcare product work",
+    summary:
+      "A branded entry point for a clinical workspace that introduces secure access without exposing private patient or practice information.",
+    contribution:
+      "The public-facing experience combines clinic-specific branding, a focused sign-in path, and concise product context for prescriptions, notes, and follow-ups.",
+    capabilities: ["Healthcare UX", "Branded authentication", "Responsive interface"],
+    repoUrl: undefined,
+    liveUrl: "https://dev.curoh.com/login/dr-raja-neuro-care",
+    image: {
+      src: "/projects/curoh-dr-raja.jpg",
+      alt: "Curoh sign-in page for Dr Raja Neuro Care with clinic branding and secure workspace messaging",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["clinical outcomes", "patient volume", "private workspace functionality"],
+    featured: true,
+  },
+  {
+    id: "digifrills",
+    n: "02",
+    title: "DigiFrills",
+    status: "deployed",
+    statusLabel: "Published organization website",
+    summary:
+      "A service-led company website for startup and SaaS audiences, structured around capabilities, project discovery, process, and direct enquiry.",
+    contribution:
+      "The public-facing implementation uses clear service positioning, a project showcase, and repeated booking paths to move visitors from overview to conversation.",
+    capabilities: ["Service positioning", "Conversion paths", "Responsive interface"],
+    repoUrl: undefined,
+    liveUrl: "https://digifrills.in/",
+    image: {
+      src: "/projects/digifrills-home.jpg",
+      alt: "DigiFrills homepage with its startup and SaaS service proposition and booking actions",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["review count", "delivery volume", "delivery-time guarantee", "client outcomes"],
+    featured: true,
+  },
+  {
+    id: "navachis",
+    n: "03",
+    title: "Navachis IT Solutions",
+    status: "deployed",
+    statusLabel: "Published organization website",
+    summary:
+      "An enterprise technology website that organizes software products, services, industries, company information, and training into clear discovery paths.",
+    contribution:
+      "The public experience translates a broad catalogue—from ERP and HRMS to custom software and infrastructure—into a navigable business-focused presentation.",
+    capabilities: ["Enterprise information architecture", "Service discovery", "Responsive interface"],
+    repoUrl: undefined,
+    liveUrl: "https://navachis.com/",
+    image: {
+      src: "/projects/navachis.jpg",
+      alt: "Navachis IT Solutions homepage presenting its business-focused technology services",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["business outcomes", "customer volume", "implementation ownership"],
+    featured: true,
+  },
+  {
+    id: "lomaa",
+    n: "04",
+    title: "LOMAA IT Solutions",
+    status: "deployed",
+    statusLabel: "Published organization website",
+    summary:
+      "A compact IT-services website that presents the company offer, core service categories, and contact routes in a direct marketing journey.",
+    contribution:
+      "The public-facing implementation balances visual identity with concise service discovery and accessible paths for prospective clients to start a conversation.",
+    capabilities: ["Marketing UX", "Service discovery", "Contact pathways"],
+    repoUrl: undefined,
+    liveUrl: "https://lomaait.com/",
+    image: {
+      src: "/projects/lomaa.jpg",
+      alt: "LOMAA IT Solutions homepage introducing its high-impact technology services",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["ratings", "years in business", "client count", "business outcomes"],
+    featured: true,
+  },
+] as const satisfies readonly ProjectEvidence[];
+
+export const independentProjects = [
+  {
+    id: "golfgives",
+    n: "05",
+    title: "GolfGives",
+    status: "assignment",
+    statusLabel: "Full-stack assignment",
+    summary:
+      "A golf subscription demonstration that connects member scores, monthly draws, charity selection, subscriptions, and administrative review.",
+    contribution:
+      "The public implementation covers multi-role product flows, Supabase data and auth, Stripe checkout and webhooks, scheduled draws, proof review, and an admin workspace.",
+    capabilities: ["Next.js", "TypeScript", "Supabase", "Stripe", "Product workflows"],
+    repoUrl: "https://github.com/prithvinew004/GolfGives",
+    liveUrl: "https://golf-gives-three.vercel.app/",
+    image: {
+      src: "/projects/golfgives.jpg",
+      alt: "GolfGives landing page showing its golf and charitable giving proposition",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["production usage", "real payment volume", "real charities", "business outcomes"],
+    featured: false,
+  },
+  {
+    id: "pdftoolkit",
+    n: "06",
+    title: "PDFToolkit",
+    status: "deployed",
+    statusLabel: "Deployed personal product",
+    summary:
+      "A browser-based workspace that organizes common PDF conversion, editing, compression, security, and utility tasks in one searchable product.",
+    contribution:
+      "The implementation demonstrates a broad tool catalogue, browser-oriented file workflows, clear category navigation, and a privacy-first product premise.",
+    capabilities: ["Next.js", "TypeScript", "PDF.js", "pdf-lib", "Information architecture"],
+    repoUrl: "https://github.com/prithvinew004/pdftoolkit",
+    liveUrl: "https://pdftoolkit-khaki.vercel.app/",
+    image: {
+      src: "/projects/pdftoolkit.jpg",
+      alt: "PDFToolkit homepage with its category navigation and popular PDF tools",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["every listed operation validated", "lossless output", "universal local processing"],
+    featured: false,
+  },
+  {
+    id: "devtoolkit",
+    n: "07",
+    title: "DevToolkit",
+    status: "deployed",
+    statusLabel: "Deployed personal product",
+    summary:
+      "A focused collection of everyday developer, text, security, image, and utility tools designed for quick discovery and direct use.",
+    contribution:
+      "The public product demonstrates a compact multi-tool information architecture with visible JSON, UUID, word-count, password, and QR workflows.",
+    capabilities: ["Next.js", "TypeScript", "Utility UX", "Content organization"],
+    repoUrl: "https://github.com/prithvinew004/devtoolkit",
+    liveUrl: "https://devtoolkit-delta.vercel.app/",
+    image: {
+      src: "/projects/devtoolkit.jpg",
+      alt: "DevToolkit homepage showing its utility categories and popular tools",
+    },
+    verifiedOn: "2026-11-21",
+    excludedClaims: ["usage volume", "community popularity", "security guarantees"],
+    featured: false,
+  },
+] as const satisfies readonly ProjectEvidence[];
+
+export const supportingProjects = [
+  {
+    id: "imagetoolkit",
+    title: "ImageToolkit",
+    status: "deployed" as const,
+    statusLabel: "Supporting personal product",
+    summary: "A deployed collection of image conversion, compression, editing, and utility workflows.",
+    repoUrl: "https://github.com/prithvinew004/ImageToolkit",
+    liveUrl: "https://image-toolkit-eight.vercel.app/",
+    verifiedOn: "2026-11-21",
+  },
+] as const;
+
+export const publicProjectCount =
+  projects.length + independentProjects.length + supportingProjects.length;
+
+export const capabilities = [
+  {
+    title: "Product interfaces",
+    description: "Responsive, accessible interfaces organized around the job a visitor needs to complete.",
+    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+    evidenceProjectIds: ["curoh-dr-raja", "digifrills", "navachis", "lomaa"],
+  },
+  {
+    title: "Full-stack workflows",
+    description: "Data, authentication, payments, scheduled work, and administrative paths designed as one product flow.",
+    skills: ["Supabase", "PostgreSQL", "Stripe", "API design"],
+    evidenceProjectIds: ["curoh-dr-raja", "golfgives"],
+  },
+  {
+    title: "Browser tools",
+    description: "File and utility experiences that keep complex operations approachable and easy to find.",
+    skills: ["PDF.js", "pdf-lib", "Client-side processing", "Information architecture"],
+    evidenceProjectIds: ["pdftoolkit", "devtoolkit"],
+  },
+] as const;
+
+export type ExperienceRecord = {
+  organization: string;
+  company: string;
+  role: string;
+  start: string;
+  end: string;
+  period: string;
+  summary: string;
+  blurb: string;
+  publishable: boolean;
+};
+
+export const experience = [
+  {
+    organization: "DigiFrills",
+    company: "DigiFrills",
+    role: "Full Stack Engineer",
+    start: "2024-10",
+    end: "present",
+    period: "Oct 2024 — Present",
+    summary: "Role and public contribution require confirmation before publication.",
+    blurb: "Role and public contribution require confirmation before publication.",
+    publishable: false,
+  },
+  {
+    organization: "LOMAA IT Solutions",
+    company: "LOMAA IT Solutions",
+    role: "Software Engineer",
+    start: "2025-10",
+    end: "2025-12",
+    period: "Oct — Dec 2025",
+    summary: "Role, dates, and public contribution require confirmation before publication.",
+    blurb: "Role, dates, and public contribution require confirmation before publication.",
+    publishable: false,
+  },
+  {
+    organization: "Navachis IT Solutions",
+    company: "Navachis IT Solutions",
+    role: "Software Engineer",
+    start: "2025-06",
+    end: "2025-10",
+    period: "Jun — Oct 2025",
+    summary: "Role, dates, and public contribution require confirmation before publication.",
+    blurb: "Role, dates, and public contribution require confirmation before publication.",
+    publishable: false,
+  },
+] as const satisfies readonly ExperienceRecord[];
+
+export const workingApproach = [
+  {
+    title: "Start with the workflow",
+    body: "Define the real user path and the evidence it needs before choosing visual effects or abstractions.",
+  },
+  {
+    title: "Build the smallest useful slice",
+    body: "Connect interface, data, and edge cases early so the product can be evaluated as a whole.",
+  },
+  {
+    title: "Polish what earns attention",
+    body: "Use motion, detail, and performance work where they improve comprehension, feedback, or trust.",
+  },
+] as const;
+
+export const experienceIntro = {
+  heading: ["How I", "work"],
+  blurb: "A product-minded process that moves from evidence and workflow to a tested, polished release.",
+};
 
 const order = [
-  { id: "about", label: "About" },
-  { id: "skills", label: "Stack" },
-  { id: "experience", label: "Experience" },
   { id: "projects", label: "Work" },
-  ...(testimonials.length ? [{ id: "testimonials", label: "Kind words" }] : []),
+  { id: "skills", label: "Capabilities" },
+  { id: "experience", label: "Approach" },
   { id: "activity", label: "Activity" },
   { id: "contact", label: "Contact" },
 ];
 
-/** Drives the navbar, the palette and every section eyebrow, so none of them can drift apart. */
-export const sections = order.map((s, i) => ({ ...s, n: String(i + 1).padStart(2, "0") }));
+export const sections = order.map((section, index) => ({
+  ...section,
+  n: String(index + 1).padStart(2, "0"),
+}));
 
-/** The eyebrow number for a section id, derived from its position in `sections`. */
-export const sectionN = (id: string) => sections.find((s) => s.id === id)?.n ?? "";
+export const sectionN = (id: string) => sections.find((section) => section.id === id)?.n ?? "";
 
 export const socials = [
   { label: "GitHub", href: "https://github.com/prithvinew004" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/prithviraj-panda-707621225/" },
+  { label: "Discord", href: "https://discord.com/users/1068023960689717288" },
   { label: "Email", href: `mailto:${profile.email}` },
 ] as const;
 
-/** `wide` spans two of the three columns. Order matters: it's what makes the rows tile. */
-export const skills = [
-  {
-    group: "Frontend",
-    blurb: "Interfaces that feel instant",
-    items: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
-    wide: true,
-  },
-  { group: "Backend", blurb: "APIs built to scale", items: ["Node.js", "Express", "FastAPI"] },
-  {
-    group: "Databases",
-    blurb: "Data modelled properly",
-    items: ["MongoDB", "PostgreSQL", "Supabase", "Prisma"],
-  },
-  { group: "Mobile", blurb: "One codebase, every screen", items: ["Flutter", "Ionic"], wide: true },
-] as const;
-
-export const marqueeStack = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Node.js",
-  "Tailwind",
-  "Express",
-  "FastAPI",
-  "MongoDB",
-  "PostgreSQL",
-  "Supabase",
-  "Prisma",
-  "Flutter",
-  "Ionic",
-] as const;
-
-export const experienceIntro = {
-  heading: ["Where I've", "worked"],
-  blurb: "Startups and IT consultancies — always close to the product, always shipping.",
-};
-
-// TODO(prithviraj): these date ranges don't reconcile — DigiFrills runs Oct 2024 to Present, but
-// LOMAA (Oct–Dec 2025) and Navachis (Jun–Oct 2025) both fall inside it. Confirm before publishing.
-// Stored as display strings because the design writes them that way, not as sortable dates.
-export const experience = [
-  {
-    company: "DigiFrills",
-    role: "Full Stack Engineer",
-    period: "Oct 2024 — Present",
-    blurb:
-      "Building and shipping SaaS features end to end — Next.js frontends, Node services, Prisma data layers — with ownership from spec to deploy.",
-  },
-  {
-    company: "LOMAA IT Solutions",
-    role: "Software Engineer",
-    period: "Oct — Dec 2025",
-    blurb:
-      "Delivered client-facing web modules and REST integrations on tight timelines, working across React frontends and Express backends.",
-  },
-  {
-    company: "Navachis IT Solutions",
-    role: "Software Engineer",
-    period: "Jun — Oct 2025",
-    blurb:
-      "Built cross-platform app screens and FastAPI endpoints, and hardened auth flows across mobile and web clients.",
-  },
-] as const;
-
-// `media` is the placeholder caption the design shows in the card's image band. Swap it for a real
-// image once there is one; `href` currently points at contact, as drawn.
-export const projects = [
-  {
-    n: "01",
-    title: "SaaS MVP",
-    blurb:
-      "Idea to launch: multi-tenant SaaS with auth, billing-ready schema, and a dashboard users actually enjoy.",
-    stack: ["Next.js", "Prisma", "Supabase"],
-    media: "[ product screenshot ]",
-    href: "#contact",
-  },
-  {
-    n: "02",
-    title: "REST API Platform",
-    blurb:
-      "Production-grade API with JWT auth, role-based access, rate limiting, and clean, versioned endpoints.",
-    stack: ["Node.js", "Express", "MongoDB", "JWT"],
-    media: "[ API docs / console ]",
-    href: "#contact",
-  },
-  {
-    n: "03",
-    title: "Cross-Platform App",
-    blurb:
-      "One product, every device — hybrid mobile app backed by a fast FastAPI service and shared design system.",
-    stack: ["Ionic", "Angular", "Flutter", "FastAPI"],
-    media: "[ mobile screens ]",
-    href: "#contact",
-  },
-] as const;
-
 export const contact = {
-  heading: ["Let's build", "something"],
-  footerNote: "Designed & built by me — obviously",
+  heading: ["Have a product", "worth building?"],
+  footerNote: "Built with evidence, restraint, and care.",
 };

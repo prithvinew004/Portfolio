@@ -1,17 +1,15 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/content/resume";
 
-// Next reuses this for twitter:image too, so there's no separate twitter-image file.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${profile.name} — ${profile.roles[0]}`;
+export const alt = `${profile.name} — ${profile.role}`;
 
-// Hex, not the CSS custom properties: ImageResponse resolves a Satori subset that has no var()
-// support and no cascade to inherit them from.
-const BG = "#0a0a0a";
-const FG = "#e9e9e4";
-const AC = "#cdff57";
-const MUTED = "#9a9a92";
+const BG = "#f2ede3";
+const SURFACE = "#faf7f0";
+const FG = "#1d1b18";
+const ACCENT = "#ad4527";
+const MUTED = "#625e57";
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -24,63 +22,78 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           background: BG,
+          color: FG,
           padding: 72,
           position: "relative",
         }}
       >
-        {/* Same accent bloom as the hero, flattened to a radial gradient. */}
         <div
           style={{
             position: "absolute",
-            top: -260,
-            left: -160,
-            width: 900,
-            height: 900,
-            background: `radial-gradient(circle, rgba(205,255,87,0.26) 0%, rgba(205,255,87,0.08) 45%, rgba(10,10,10,0) 70%)`,
+            top: 52,
+            right: 52,
+            width: 260,
+            height: 260,
+            borderRadius: 999,
+            background: SURFACE,
+            border: "2px solid #cfc6b8",
             display: "flex",
           }}
         />
         <div
           style={{
             position: "absolute",
-            bottom: -320,
-            right: -200,
-            width: 760,
-            height: 760,
-            background: `radial-gradient(circle, rgba(233,233,228,0.10) 0%, rgba(10,10,10,0) 68%)`,
+            right: 0,
+            bottom: 0,
+            width: 360,
+            height: 16,
+            background: ACCENT,
             display: "flex",
           }}
         />
 
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 12, height: 12, borderRadius: 999, background: AC, display: "flex" }} />
-          <div style={{ fontSize: 22, letterSpacing: 8, color: MUTED, textTransform: "uppercase" }}>
-            {profile.availability}
-          </div>
+        <div
+          style={{
+            display: "flex",
+            fontSize: 22,
+            letterSpacing: 6,
+            color: ACCENT,
+            textTransform: "uppercase",
+          }}
+        >
+          Full-stack product development
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontSize: 132,
+              maxWidth: 980,
+              display: "flex",
+              fontSize: 118,
               fontWeight: 800,
               letterSpacing: -5,
-              lineHeight: 1,
-              color: FG,
-              display: "flex",
+              lineHeight: 0.95,
             }}
           >
             {profile.name}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 28 }}>
-            <div style={{ fontSize: 34, color: AC, display: "flex" }}>&gt;</div>
-            <div style={{ fontSize: 34, color: FG, display: "flex" }}>
-              {profile.roles.join("  ·  ")}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 30 }}>
+            <div style={{ display: "flex", fontSize: 34, color: ACCENT }}>{profile.role}</div>
+            <div
+              style={{
+                display: "flex",
+                maxWidth: 850,
+                fontSize: 26,
+                lineHeight: 1.35,
+                color: MUTED,
+              }}
+            >
+              {profile.offer}
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", height: 4, background: AC, width: 240 }} />
+        <div style={{ display: "flex", width: 240, height: 4, background: ACCENT }} />
       </div>
     ),
     size

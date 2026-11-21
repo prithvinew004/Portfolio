@@ -25,5 +25,8 @@ npm-debug.log*
 .agents/
 .specify/
 .playwright-mcp/
+playwright-report/
+test-results/
+coverage/
 AGENT_SKILLS.md
 skills-lock.json

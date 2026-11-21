@@ -1,147 +1,62 @@
-"use client";
-
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { experience, experienceIntro, sectionN } from "@/content/resume";
-import { Reveal } from "@/components/animations/reveal";
-import { SectionCurtain } from "@/components/animations/section-curtain";
-import { BlurWords } from "@/components/animations/blur-words";
+import { experience, experienceIntro, sectionN, workingApproach } from "@/content/resume";
 import { SectionLabel } from "@/components/ui/section-label";
-import { GUTTER, SECTION_Y, CONTENT } from "@/lib/section";
-import { cn } from "@/lib/utils";
+import { CONTENT, GUTTER, SECTION_Y } from "@/lib/section";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+const publishedExperience = experience.filter((record) => record.publishable);
 
 export function Experience() {
-  const scope = useRef<HTMLElement>(null);
-  const rail = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const root = scope.current!;
-      // matchMedia rather than React state so a breakpoint flip reverts and rebuilds atomically.
-      // The `base` condition always matches — with only the reduced query, the callback would
-      // never fire for a visitor with motion enabled.
-      const mm = gsap.matchMedia();
-      mm.add({ base: "(min-width: 1px)", reduced: "(prefers-reduced-motion: reduce)" }, (ctx) => {
-        const { reduced } = ctx.conditions as Record<string, boolean>;
-        const line = root.querySelector("[data-progress]");
-        const dots = gsap.utils.toArray<HTMLElement>(root.querySelectorAll("[data-node]"));
-
-        if (reduced) {
-          // Show the rail complete and every node lit rather than absent.
-          gsap.set(line, { attr: { "stroke-dashoffset": 0 } });
-          gsap.set(dots, { backgroundColor: "var(--ac)", borderColor: "var(--ac)" });
-          return;
-        }
-
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: rail.current, start: "top 72%", end: "bottom 60%", scrub: 0.4 },
-        });
-
-        // attr, not style: as an inline CSS length the offset is measured in user units and
-        // pathLength="1" is ignored, which renders the rail as a row of tiny dashes.
-        tl.to(line, { attr: { "stroke-dashoffset": 0 }, ease: "none", duration: dots.length }, 0);
-
-        // The rail spans t=0..dots.length, so spacing the nodes evenly across that span lights
-        // each one at the moment the line arrives: first at the start, last exactly at the end.
-        const step = dots.length / Math.max(1, dots.length - 1);
-        dots.forEach((dot, i) => {
-          tl.to(
-            dot,
-            {
-              backgroundColor: "var(--ac)",
-              borderColor: "var(--ac)",
-              boxShadow: "0 0 14px var(--ac)",
-              duration: 0.25,
-            },
-            i * step
-          );
-        });
-      });
-    },
-    { scope }
-  );
-
   return (
-    <section ref={scope} id="experience" className={`relative ${GUTTER} ${SECTION_Y}`}>
-      <SectionCurtain />
-      <div className={cn("grid grid-cols-1 gap-[clamp(32px,6vw,90px)] lg:grid-cols-[1fr_1.4fr]", CONTENT)}>
-        <div>
-          {/* Sticky only where there are two columns — on one column it would pin over the list. */}
-          <div className="lg:sticky lg:top-[120px]">
-            <SectionLabel n={sectionN("experience")} className="mb-6">
-              Experience
-            </SectionLabel>
-            {/* Each line is nowrap so the design's break lands after "Where I've" — left to itself
-                the narrower left column broke it again mid-phrase into three lines. */}
-            <h2 className="m-0 font-display text-[clamp(30px,4vw,56px)] font-extrabold leading-[1.05] tracking-[-0.01em]">
-              {experienceIntro.heading.map((line) => (
-                // One BlurWords per line so the design's break after "Where I've" survives; each
-                // line stays nowrap so the narrow left column can't re-break it mid-phrase.
-                <BlurWords key={line} text={line} className="m-0 block whitespace-nowrap" />
-              ))}
-            </h2>
-            <p className="mt-5 max-w-[34ch] text-pretty text-[15px] leading-[1.7] text-[var(--muted)]">
-              {experienceIntro.blurb}
-            </p>
-          </div>
-        </div>
-
-        <div ref={rail} className="relative pl-11">
-          <svg
-            aria-hidden
-            viewBox="0 0 2 100"
-            preserveAspectRatio="none"
-            // h-full is load-bearing: an SVG carries an intrinsic ratio from its viewBox, so
-            // inset-y-0 alone leaves it at its natural height instead of spanning the column.
-            className="absolute left-[11px] top-0 h-full w-0.5"
+    <section
+      id="experience"
+      aria-labelledby="approach-title"
+      className={`${GUTTER} ${SECTION_Y}`}
+    >
+      <div className={`${CONTENT} mx-auto`}>
+        <SectionLabel n={sectionN("experience")}>Approach</SectionLabel>
+        <div className="mt-7 grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(20rem,1fr)] lg:items-end">
+          <h2
+            id="approach-title"
+            className="font-display text-[clamp(3.2rem,7vw,7.5rem)] font-extrabold leading-[0.88] tracking-[-0.055em]"
           >
-            <line x1="1" y1="0" x2="1" y2="100" stroke="rgba(255,255,255,.1)" strokeWidth="2" />
-            <line
-              data-progress
-              x1="1"
-              y1="0"
-              x2="1"
-              y2="100"
-              pathLength="1"
-              strokeDasharray="1"
-              strokeDashoffset="1"
-              stroke="var(--ac)"
-              strokeWidth="2"
-            />
-          </svg>
-
-          <ol className="m-0 list-none p-0">
-            {experience.map((job, i) => (
-              <li key={job.company} className="relative">
-                <span
-                  data-node
-                  aria-hidden
-                  className="absolute left-[-39px] top-2 box-border size-3.5 rounded-full border-2 border-white/25 bg-[var(--node)]"
-                />
-                <Reveal
-                  delay={i * 60}
-                  from={i % 2 ? "right" : "left"}
-                  className={i < experience.length - 1 ? "pb-[clamp(48px,8vh,90px)]" : undefined}
-                >
-                  <div className="mb-2.5 text-[13px] uppercase tracking-[0.18em] text-[var(--ac)]">
-                    {job.period}
-                  </div>
-                  <h3 className="m-0 font-display text-[clamp(24px,2.6vw,34px)] font-bold">
-                    {job.company}
-                  </h3>
-                  <div className="mb-3.5 mt-1.5 text-[15px] text-[var(--muted)]">{job.role}</div>
-                  <p className="m-0 max-w-[52ch] text-pretty text-[15px] leading-[1.7] text-[var(--muted)]">
-                    {job.blurb}
-                  </p>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
+            {experienceIntro.heading[0]} {experienceIntro.heading[1]}.
+          </h2>
+          <p className="max-w-[38rem] text-lg leading-8 text-[var(--muted)]">
+            {experienceIntro.blurb}
+          </p>
         </div>
+
+        {publishedExperience.length > 0 ? (
+          <div className="mt-14 border-t border-[var(--line)]">
+            {publishedExperience.map((record) => (
+              <article
+                key={`${record.organization}-${record.start}`}
+                className="grid gap-3 border-b border-[var(--line)] py-8 lg:grid-cols-[0.8fr_1fr_2fr]"
+              >
+                <h3 className="text-xl font-bold">{record.organization}</h3>
+                <p>{record.role}</p>
+                <div>
+                  <p className="text-sm text-[var(--muted)]">{record.period}</p>
+                  <p className="mt-2 leading-7 text-[var(--muted)]">{record.summary}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-14 grid border-t border-[var(--line)] lg:grid-cols-3">
+            {workingApproach.map((step, index) => (
+              <article
+                key={step.title}
+                className="border-b border-[var(--line)] py-8 lg:border-b-0 lg:border-r lg:px-8 lg:py-10 first:lg:pl-0 last:lg:border-r-0 last:lg:pr-0"
+              >
+                <span className="text-xs font-semibold tracking-[0.18em] text-[var(--accent)]">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-5 text-2xl font-bold">{step.title}</h3>
+                <p className="mt-3 leading-7 text-[var(--muted)]">{step.body}</p>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

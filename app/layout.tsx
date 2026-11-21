@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
 import { Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { SmoothScroll } from "@/components/animations/smooth-scroll";
-import { Cursor } from "@/components/animations/cursor";
-import { Grain } from "@/components/ui/grain";
-import { PageShell } from "@/components/page-shell";
 import { Nav } from "@/components/nav";
-import { CommandPalette } from "@/components/command-palette";
-import { profile } from "@/content/resume";
+import { profile, socials } from "@/content/resume";
 
-// No `weight`: that pins static instances, and the hero's weight ramp needs the wght axis to
-// interpolate. Omitting it makes next/font fetch the variable font, which also serves 700/800.
+// Keep the display face variable so all editorial heading weights share one font asset.
 const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 const grotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -28,25 +22,34 @@ const siteUrl =
     : "http://localhost:3000");
 
 const title = `${profile.name} — ${profile.role}`;
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.name,
+  url: siteUrl,
+  jobTitle: profile.role,
+  email: `mailto:${profile.email}`,
+  sameAs: socials.filter(({ label }) => label !== "Email").map(({ href }) => href),
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: title, template: `%s — ${profile.name}` },
-  description: profile.tagline,
+  description: profile.offer,
   applicationName: profile.name,
   authors: [{ name: profile.name }],
   creator: profile.name,
-  keywords: [profile.name, ...profile.roles],
+  keywords: [profile.name, "full-stack developer", "Next.js developer", "TypeScript developer"],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
     siteName: profile.name,
     title,
-    description: profile.tagline,
+    description: profile.offer,
     locale: "en_US",
   },
-  twitter: { card: "summary_large_image", title, description: profile.tagline },
+  twitter: { card: "summary_large_image", title, description: profile.offer },
   robots: { index: true, follow: true },
 };
 
@@ -54,13 +57,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${syne.variable} ${grotesk.variable}`}>
       <body className="font-sans">
-        <Grain />
-        <Cursor />
-        <PageShell>
-          <Nav />
-          <CommandPalette />
-          <SmoothScroll>{children}</SmoothScroll>
-        </PageShell>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }}
+        />
+        <Nav />
+        {children}
       </body>
     </html>
   );

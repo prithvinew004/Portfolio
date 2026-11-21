@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef } from "react";
-import { useInView } from "framer-motion";
 import {
   ContributionGraph,
   ContributionGraphBlock,
@@ -9,7 +7,6 @@ import {
   ContributionGraphLegend,
   type Activity,
 } from "@/components/kibo-ui/contribution-graph";
-import { useReducedMotion } from "@/hooks/use-media-query";
 
 /**
  * A cell's delay is driven mostly by its column, with a small per-row offset — that tilt is what
@@ -19,14 +16,8 @@ const PER_WEEK = 14; // ms
 const PER_DAY = 26; // ms
 
 export function ContributionWave({ days, total }: { days: Activity[]; total: number }) {
-  const host = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-  // Once: a graph that replays every time it scrolls past would be noise, not delight.
-  const inView = useInView(host, { once: true, amount: 0.25 });
-  const play = inView && !reduced;
-
   return (
-    <div ref={host}>
+    <div>
       <ContributionGraph
         data={days}
         blockSize={11}
@@ -49,12 +40,8 @@ export function ContributionWave({ days, total }: { days: Activity[]; total: num
               // Kibo's default fills are shadcn tokens (`fill-muted-foreground`) this theme
               // never defined, so they resolve to nothing — `.cg` replaces them. `cg-cell`
               // only carries the wave.
-              className={`cg-cell ${play ? "cg-play" : ""}`}
-              style={
-                reduced
-                  ? undefined
-                  : { animationDelay: `${weekIndex * PER_WEEK + dayIndex * PER_DAY}ms` }
-              }
+              className="cg-cell cg-play"
+              style={{ animationDelay: `${weekIndex * PER_WEEK + dayIndex * PER_DAY}ms` }}
             >
               {/* Native SVG tooltip — no JS, no library, works on keyboard focus of the graph. */}
               <title>{`${activity.count} contribution${activity.count === 1 ? "" : "s"} on ${activity.date}`}</title>

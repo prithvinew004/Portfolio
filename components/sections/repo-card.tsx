@@ -1,28 +1,16 @@
-"use client";
-
 import { Star } from "lucide-react";
 import type { Repo } from "@/lib/github";
-import { useCursorGlow } from "@/hooks/use-cursor-glow";
 
-/**
- * Same card language as the Skills bento — `gborder` edge, cursor-following `glow-border`,
- * underline-draw on the title. Client only for the glow's pointer handler.
- */
 export function RepoCard({ repo, color }: { repo: Repo; color: string }) {
-  const glow = useCursorGlow<HTMLAnchorElement>();
-
   return (
     <a
-      ref={glow.ref}
-      onPointerMove={glow.onPointerMove}
       href={repo.url}
       target="_blank"
       rel="noreferrer noopener"
-      data-cursor="view"
-      className="gborder glow-border group flex h-full flex-col rounded-[20px] p-7 no-underline [transition:box-shadow_var(--dur)_var(--ease),transform_var(--dur)_var(--ease)] hover:-translate-y-1 hover:shadow-[0_24px_70px_-46px_var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
+      className="group flex h-full flex-col rounded-[var(--radius)] border border-[var(--line)] bg-[var(--surface)] p-6 no-underline transition-colors hover:border-[var(--accent)]"
     >
       <div className="mb-2.5 flex items-baseline gap-3">
-        <span className="ul-draw relative font-display text-lg font-bold text-[var(--fg)] [transition:color_var(--dur)_var(--ease)] group-hover:text-[var(--ac)]">
+        <span className="font-display text-lg font-bold text-[var(--fg)] group-hover:text-[var(--accent)]">
           {repo.name}
         </span>
         {/* A star count of zero is noise on a young account — show the badge only when it earns it. */}

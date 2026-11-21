@@ -1,197 +1,166 @@
-"use client";
-
-import { useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { projects, sectionN } from "@/content/resume";
-import { TiltCard } from "@/components/ui/tilt-card";
-import { TiltPill } from "@/components/ui/tilt-pill";
+import { ArrowUpRight } from "lucide-react";
+import { independentProjects, projects, sectionN, supportingProjects } from "@/content/resume";
+import { ProjectMedia } from "@/components/ui/project-media";
 import { SectionLabel } from "@/components/ui/section-label";
-import { GUTTER, SECTION_Y, CONTENT } from "@/lib/section";
-import { cn } from "@/lib/utils";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-const XFADE = 0.7; // length of one card-to-card transition, in timeline units
-const STEP = 1; // spacing between transitions; the gap above XFADE is the dwell on each card
-
-function Card({ project }: { project: (typeof projects)[number] }) {
-  return (
-    // glow-border on the card itself — TiltCard's own pointer handler feeds it --mx/--my.
-    <TiltCard className="gborder glow-border group flex h-full flex-col [transition:box-shadow_var(--dur)_var(--ease)] hover:shadow-[0_24px_70px_-40px_var(--ac)]">
-      {/* flex-1 + min-h-0 lets the media band absorb the leftover height, so the card fits whatever
-          the pinned stage gives it rather than forcing the section taller than the viewport. */}
-      <div className="m-3.5 flex min-h-0 flex-1 items-center justify-center rounded-[14px] bg-[repeating-linear-gradient(135deg,rgba(255,255,255,.045)_0_10px,transparent_10px_22px)] font-mono text-xs tracking-[0.1em] text-[var(--muted)]">
-        {project.media}
-      </div>
-      <div className="px-7 pb-7 pt-3.5">
-        <div className="mb-2.5 text-xs tracking-[0.2em] text-[var(--ac)]">{project.n}</div>
-        <h3 className="m-0 mb-2.5 font-display text-2xl font-bold sm:text-3xl">{project.title}</h3>
-        <p className="m-0 mb-[18px] max-w-[60ch] text-pretty text-sm leading-[1.7] text-[var(--muted)]">
-          {project.blurb}
-        </p>
-        <ul className="mb-5 flex flex-wrap gap-2">
-          {project.stack.map((tech) => (
-            <TiltPill
-              key={tech}
-              className="rounded-full border border-white/[0.12] px-3 py-[5px] text-xs text-[var(--muted)] [transition:transform_var(--dur)_var(--ease),border-color_var(--dur)_var(--ease)] hover:border-[var(--ac)]/50"
-            >
-              {tech}
-            </TiltPill>
-          ))}
-        </ul>
-        <a
-          href={project.href}
-          className="ul-draw relative inline-block pb-[3px] text-[13px] uppercase tracking-[0.14em] text-[var(--fg)] [transition:color_var(--dur)_var(--ease)] hover:text-[var(--ac)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ac)]"
-        >
-          Case study{" "}
-          <span
-            aria-hidden
-            className="inline-block [transition:transform_var(--dur)_var(--ease)] group-hover:translate-x-1"
-          >
-            →
-          </span>
-          <span className="sr-only">for {project.title}</span>
-        </a>
-      </div>
-    </TiltCard>
-  );
-}
+import { CONTENT, GUTTER, SECTION_Y } from "@/lib/section";
 
 export function Projects() {
-  const scope = useRef<HTMLElement>(null);
-  const [active, setActive] = useState(0);
-  const total = projects.length;
-
-  useGSAP(
-    () => {
-      const root = scope.current!;
-      // matchMedia rather than React state: it reverts and rebuilds atomically on a query flip.
-      // `base` always matches — with only the reduced query the callback would never fire for a
-      // visitor who has motion enabled.
-      const mm = gsap.matchMedia();
-      mm.add({ base: "(min-width: 1px)", reduced: "(prefers-reduced-motion: reduce)" }, (ctx) => {
-        const { reduced } = ctx.conditions as Record<string, boolean>;
-        // Under reduced motion the motion-reduce: classes already lay the cards out in flow, and
-        // writing any style here would strand one mid-transition.
-        if (reduced) return;
-
-        const cards = gsap.utils.toArray<HTMLElement>(root.querySelectorAll("[data-card]"));
-        if (cards.length < 2) return;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            // Roughly one viewport of scroll per transition, plus a little lead-out.
-            end: `+=${(cards.length - 1) * 110 + 30}%`,
-            scrub: 0.5,
-            pin: true,
-            // The default position:fixed pin is counted by Chrome as a full-viewport layout shift
-            // each time it engages; pinning by transform never touches layout.
-            pinType: "transform",
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const i = Math.min(total - 1, Math.round(self.progress * (cards.length - 1)));
-              // Guarded, so this is two state updates across the sequence rather than one a frame.
-              setActive((prev) => (prev === i ? prev : i));
-            },
-          },
-        });
-
-        // GSAP drives the wrapper, never the card: TiltCard writes its own transform, and both
-        // touching the same element would fight over it.
-        cards.forEach((card, k) => {
-          if (k === cards.length - 1) return;
-          const at = k * STEP;
-          tl.to(
-            card,
-            { yPercent: -8, scale: 0.9, opacity: 0, ease: "power2.in", duration: XFADE },
-            at
-          ).fromTo(
-            cards[k + 1],
-            { yPercent: 12, scale: 0.96, opacity: 0 },
-            { yPercent: 0, scale: 1, opacity: 1, ease: "power2.out", duration: XFADE },
-            at
-          );
-        });
-      });
-    },
-    { scope }
-  );
-
   return (
-    <section
-      ref={scope}
-      id="projects"
-      className={cn(
-        "relative overflow-hidden",
-        GUTTER,
-        SECTION_Y,
-        "motion-safe:flex motion-safe:min-h-svh motion-safe:flex-col motion-safe:justify-center motion-safe:py-0"
-      )}
-    >
-      <div className={cn("w-full", CONTENT)}>
-        <div className="flex items-end justify-between gap-6">
-          <SectionLabel n={sectionN("projects")}>Selected work</SectionLabel>
-
-          {/* Meaningless when all three cards are on screen at once, so it's hidden in that mode. */}
-          <div
-            className="flex items-baseline gap-2 font-display text-sm font-bold tabular-nums motion-reduce:hidden"
-            aria-live="polite"
-            aria-atomic="true"
+    <section id="projects" aria-labelledby="projects-title" className={`${GUTTER} ${SECTION_Y}`}>
+      <div className={`${CONTENT} mx-auto`}>
+        <SectionLabel n={sectionN("projects")}>Selected work</SectionLabel>
+        <div className="mt-7 grid gap-8 border-b border-[var(--line)] pb-12 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.7fr)] lg:items-end">
+          <h2
+            id="projects-title"
+            className="max-w-[10ch] font-display text-[clamp(3rem,7vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.05em]"
           >
-            <span className="text-[var(--ac)]">{projects[active].n}</span>
-            <span className="text-[var(--muted)]">/</span>
-            <span className="text-[var(--muted)]">{String(total).padStart(2, "0")}</span>
-            <span className="sr-only">
-              Project {active + 1} of {total}: {projects[active].title}
-            </span>
-          </div>
+            Real work, shown with context.
+          </h2>
+          <p className="max-w-[38rem] text-lg leading-8 text-[var(--muted)]">
+            Four published product and organization surfaces, followed by independent builds. Every
+            claim stays within what the public work can show.
+          </p>
         </div>
 
-        {/* Progress rail — one segment per project. */}
-        <div className="mt-4 flex gap-1.5 motion-reduce:hidden" aria-hidden>
-          {projects.map((p, i) => (
-            <span
-              key={p.n}
-              className={cn(
-                "h-px flex-1 transition-colors duration-[--dur] ease-[--ease]",
-                i <= active ? "bg-[var(--ac)]" : "bg-white/15"
-              )}
-            />
-          ))}
-        </div>
-
-        <div
-          className={cn(
-            "relative mt-8 [perspective:1200px]",
-            // Pinned mode stacks the cards in a fixed-height stage sized in svh, so the section
-            // always fits the viewport. Reduced motion drops them back into normal flow.
-            "motion-safe:h-[62svh] motion-safe:min-h-[420px]",
-            "motion-reduce:flex motion-reduce:flex-col motion-reduce:gap-6"
-          )}
-        >
-          {projects.map((p, i) => (
-            <div
-              key={p.title}
-              data-card
-              data-cursor="view"
-              className={cn(
-                "motion-safe:absolute motion-safe:inset-0 motion-reduce:relative motion-reduce:h-[520px]",
-                // Faded cards keep opacity 0 but stay hit-testable, so the topmost one swallows
-                // every pointer event meant for the visible card — that silently killed the tilt,
-                // the glow and the Case study link. Only gated in motion-safe: under reduced
-                // motion the cards sit in normal flow and all three must stay interactive.
-                i !== active && "motion-safe:pointer-events-none"
-              )}
+        <div>
+          {projects.map((project, index) => (
+            <article
+              key={project.id}
+              id={`project-${project.id}`}
+              className="grid gap-8 border-b border-[var(--line)] py-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:items-center lg:gap-16 lg:py-24"
             >
-              <Card project={p} />
-            </div>
+              <div className={index % 2 === 1 ? "lg:order-2" : undefined}>
+                <ProjectMedia
+                  src={project.image.src}
+                  alt={project.image.alt}
+                  title={project.title}
+                  liveUrl={project.liveUrl!}
+                  priority={index === 0}
+                />
+              </div>
+
+              <div className={`flex flex-col justify-center ${index % 2 === 1 ? "lg:order-1" : ""}`}>
+                <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.16em]">
+                  <span className="text-[var(--accent)]">{project.n}</span>
+                  <span className="text-[var(--muted)]">{project.statusLabel}</span>
+                </div>
+                <h3 className="mt-5 font-display text-[clamp(2.4rem,5vw,5rem)] font-extrabold leading-none tracking-[-0.045em]">
+                  {project.title}
+                </h3>
+                <p className="mt-6 text-xl leading-8">{project.summary}</p>
+                <p className="mt-4 max-w-[60ch] leading-7 text-[var(--muted)]">
+                  {project.contribution}
+                </p>
+
+                <ul aria-label={`${project.title} capabilities`} className="mt-7 flex flex-wrap gap-2">
+                  {project.capabilities.map((capability) => (
+                    <li
+                      key={capability}
+                      className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--muted)]"
+                    >
+                      {capability}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="inline-flex min-h-11 items-center gap-2 font-semibold text-[var(--accent)] underline decoration-[var(--line)] underline-offset-4 hover:decoration-[var(--accent)]"
+                    >
+                      View live product <ArrowUpRight aria-hidden className="size-4" />
+                      <span className="sr-only">: {project.title} (opens in a new tab)</span>
+                    </a>
+                  )}
+                  {project.repoUrl && (
+                    <a
+                      href={project.repoUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="inline-flex min-h-11 items-center gap-2 font-semibold underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
+                    >
+                      View source <ArrowUpRight aria-hidden className="size-4" />
+                      <span className="sr-only">: {project.title} (opens in a new tab)</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
           ))}
         </div>
+
+        <section aria-labelledby="independent-work-title" className="mt-14">
+          <div className="grid gap-4 border-b border-[var(--line)] pb-7 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div>
+              <p className="text-xs uppercase tracking-[0.16em] text-[var(--accent)]">
+                Independent products
+              </p>
+              <h3 id="independent-work-title" className="mt-2 text-3xl font-bold">
+                Tools and full-stack builds
+              </h3>
+            </div>
+            <p className="max-w-xl text-[var(--muted)]">
+              Public experiments and products that show implementation depth beyond the featured
+              organization work.
+            </p>
+          </div>
+
+          <ul className="grid border-b border-[var(--line)] lg:grid-cols-3">
+            {independentProjects.map((project) => (
+              <li
+                key={project.id}
+                id={`project-${project.id}`}
+                className="border-b border-[var(--line)] py-7 last:border-b-0 lg:border-b-0 lg:border-r lg:px-7 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
+              >
+                <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
+                  {project.statusLabel}
+                </p>
+                <h4 className="mt-3 text-2xl font-bold">{project.title}</h4>
+                <p className="mt-3 leading-7 text-[var(--muted)]">{project.summary}</p>
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex min-h-10 items-center gap-1 underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
+                  >
+                    Live <ArrowUpRight aria-hidden className="size-4" />
+                    <span className="sr-only">: {project.title} (opens in a new tab)</span>
+                  </a>
+                  <a
+                    href={project.repoUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex min-h-10 items-center gap-1 underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
+                  >
+                    Source <ArrowUpRight aria-hidden className="size-4" />
+                    <span className="sr-only">: {project.title} (opens in a new tab)</span>
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <aside className="mt-10 flex flex-col justify-between gap-5 rounded-[var(--radius)] bg-[var(--fg)] p-6 text-[var(--surface)] sm:p-8 lg:flex-row lg:items-center">
+          <div>
+            <p className="text-xs uppercase tracking-[0.16em] text-[var(--bg)]/65">Supporting work</p>
+            <h3 className="mt-2 text-2xl font-bold">{supportingProjects[0].title}</h3>
+            <p className="mt-2 max-w-2xl text-[var(--bg)]/75">{supportingProjects[0].summary}</p>
+          </div>
+          <a
+            href={supportingProjects[0].liveUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-full border border-[var(--surface)]/50 px-5"
+          >
+            Open ImageToolkit <ArrowUpRight aria-hidden className="size-4" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+        </aside>
       </div>
     </section>
   );

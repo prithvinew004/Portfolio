@@ -12,6 +12,8 @@ export type Contributions = {
   total: number;
   /** True when the live fetch failed and the committed snapshot is being shown instead. */
   stale: boolean;
+  source: "github" | "snapshot";
+  coveredThrough: string;
 };
 
 export type Repo = {
@@ -21,6 +23,13 @@ export type Repo = {
   stars: number;
   url: string;
   pushedAt: string;
+};
+
+export type RepoFeed = {
+  repos: Repo[];
+  stale: boolean;
+  source: "github" | "snapshot";
+  coveredThrough: string;
 };
 
 /**
@@ -45,7 +54,11 @@ function auth(url: string): HeadersInit {
  */
 async function safeJson<T>(url: string, init: RequestInit & { next: { revalidate: number } }) {
   try {
-    const res = await fetch(url, { ...init, headers: auth(url) });
+    const res = await fetch(url, {
+      ...init,
+      headers: auth(url),
+      signal: AbortSignal.timeout(8_000),
+    });
     if (!res.ok) {
       console.warn(`[github] ${url} -> ${res.status}; using fallback`);
       return null;
@@ -71,13 +84,20 @@ export async function getContributions(): Promise<Contributions> {
   // A 200 with an empty or malformed body is still a failure — check the payload, not the status.
   const days = data?.contributions;
   if (!Array.isArray(days) || days.length === 0) {
-    return { ...(fallback.contributions as Omit<Contributions, "stale">), stale: true };
+    return {
+      ...fallback.contributions,
+      stale: true,
+      source: "snapshot",
+      coveredThrough: fallback.capturedAt,
+    };
   }
 
   return {
     days,
     total: days.reduce((sum, d) => sum + d.count, 0),
     stale: false,
+    source: "github",
+    coveredThrough: days.at(-1)?.date ?? new Date().toISOString().slice(0, 10),
   };
 }
 
@@ -97,13 +117,20 @@ type ApiRepo = {
  * The *selection* is curated in content/resume.ts; everything displayed — description, language,
  * star count — is live from the API.
  */
-export async function getRepos(): Promise<{ repos: Repo[]; stale: boolean }> {
+export async function getRepos(): Promise<RepoFeed> {
   const data = await safeJson<ApiRepo[]>(
     `https://api.github.com/users/${github.username}/repos?per_page=100&sort=pushed`,
     { next: { revalidate: DAY } }
   );
 
-  if (!Array.isArray(data)) return { repos: fallback.repos as Repo[], stale: true };
+  if (!Array.isArray(data)) {
+    return {
+      repos: fallback.repos as Repo[],
+      stale: true,
+      source: "snapshot",
+      coveredThrough: fallback.capturedAt,
+    };
+  }
 
   const byName = new Map(data.map((r) => [r.name.toLowerCase(), r]));
   const repos = github.repos
@@ -119,8 +146,20 @@ export async function getRepos(): Promise<{ repos: Repo[]; stale: boolean }> {
     }));
 
   // A renamed or deleted repo would silently drop a card; the snapshot still has it.
-  if (repos.length === 0) return { repos: fallback.repos as Repo[], stale: true };
-  return { repos, stale: false };
+  if (repos.length === 0) {
+    return {
+      repos: fallback.repos as Repo[],
+      stale: true,
+      source: "snapshot",
+      coveredThrough: fallback.capturedAt,
+    };
+  }
+  return {
+    repos,
+    stale: false,
+    source: "github",
+    coveredThrough: new Date().toISOString().slice(0, 10),
+  };
 }
 
 /** Linguist colours for the languages this profile actually uses; grey covers anything new. */
