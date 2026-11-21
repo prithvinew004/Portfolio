@@ -73,7 +73,7 @@ test("first viewport explains the offer and exposes both primary actions", async
 
     const contact = page.getByRole("link", { name: /start a conversation/i }).last();
     const work = page.getByRole("link", { name: /see selected work/i });
-    await expect(contact).toHaveAttribute("href", "mailto:prithvi.new004@gmail.com");
+    await expect(contact).toHaveAttribute("href", "#contact");
     await expect(work).toHaveAttribute("href", "#projects");
     await expect(contact).toBeInViewport();
     await expect(work).toBeInViewport();
@@ -92,6 +92,9 @@ test("first viewport explains the offer and exposes both primary actions", async
 
     await page.keyboard.press("Tab");
     await expect(page.locator(":focus-visible")).toBeVisible();
+
+    await contact.click();
+    await expect(page.locator("#contact")).toBeInViewport();
   }
 });
 
@@ -277,7 +280,7 @@ test("public activity discloses its source and covered-through date", async ({ p
   await expect(page.getByRole("heading", { name: /real work, shown with context/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /start a conversation/i }).last()).toHaveAttribute(
     "href",
-    /^mailto:/
+    "#contact"
   );
   expect(clientGitHubRequests).toEqual([]);
 });

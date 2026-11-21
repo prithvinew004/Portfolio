@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight } from "lucide-react";
 import { profile, projects, publicProjectCount } from "@/content/resume";
 import { CONTENT, GUTTER } from "@/lib/section";
 
@@ -56,11 +56,11 @@ export function Hero() {
 
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
             <a
-              href={`mailto:${profile.email}`}
+              href="#contact"
               className="inline-flex min-h-12 items-center justify-between gap-6 rounded-full bg-[var(--fg)] px-6 py-3 font-medium text-[var(--surface)] transition-colors hover:bg-[var(--accent)]"
             >
               Start a conversation
-              <ArrowUpRight aria-hidden className="size-4" />
+              <ArrowDownRight aria-hidden className="size-4" />
             </a>
             <a
               href="#projects"
