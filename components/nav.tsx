@@ -33,17 +33,17 @@ export function Nav() {
     <header className={`${GUTTER} fixed inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top)]`}>
       <nav
         aria-label="Primary navigation"
-        className="nav-shell mx-auto mt-3 flex h-14 max-w-6xl items-center justify-between gap-5 px-3 sm:px-4"
+        className="nav-shell mx-auto mt-3 flex h-14 max-w-[77.5rem] items-center justify-between gap-5 px-3 sm:px-4"
       >
-        <a href="#hero" className="font-display text-lg font-bold">
-          PP<span className="text-[var(--accent)]">.</span>
+        <a href="#hero" className="inline-flex min-h-11 items-center font-display text-base font-medium tracking-[-0.02em]">
+          P<span className="text-[var(--signal)]">/</span>Panda
           <span className="sr-only">{profile.name} — back to top</span>
         </a>
 
         <ul className="hidden items-center gap-1 lg:flex">
           <AnimatedBackground
             defaultValue={activeSection || undefined}
-            className="rounded-full bg-[var(--fg)]"
+            className="rounded-md bg-white/10"
             transition={{ type: "spring", duration: 0.42, bounce: 0.08 }}
           >
             {sections.map((section) => (
@@ -63,26 +63,26 @@ export function Nav() {
         <ActionLink
           href={`mailto:${profile.email}`}
           variant="outline"
-          className="hidden sm:inline-flex"
+          className="hidden border-white/20 text-[var(--fg)] sm:inline-flex"
         >
-          Let&apos;s talk
+          Email me
         </ActionLink>
 
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
             aria-label="Open navigation"
-            className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--fg)] lg:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-md border border-white/20 lg:hidden"
           >
             <Menu aria-hidden className="size-5" />
           </Dialog.Trigger>
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 z-40 bg-[var(--fg)]/30 transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-            <Dialog.Popup className="fixed inset-y-0 right-0 z-50 flex w-[min(88vw,26rem)] flex-col bg-[var(--surface)] p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl outline-none transition-transform duration-200 data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full">
+            <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/65 transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+            <Dialog.Popup className="fixed inset-y-0 right-0 z-50 flex w-[min(88vw,26rem)] flex-col bg-[var(--surface)] p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-[var(--fg)] shadow-2xl outline-none transition-transform duration-200 data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full">
               <div className="flex items-center justify-between border-b border-[var(--line)] pb-5">
                 <Dialog.Title className="font-display text-lg font-semibold">Navigate</Dialog.Title>
                 <Dialog.Close
                   aria-label="Close navigation"
-                  className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--fg)]"
+                  className="inline-flex size-11 items-center justify-center rounded-md border border-white/20"
                 >
                   <X aria-hidden className="size-5" />
                 </Dialog.Close>
@@ -108,7 +108,7 @@ export function Nav() {
               <ActionLink
                 href={`mailto:${profile.email}`}
                 variant="primary"
-                className="mt-auto"
+                className="mt-auto bg-[var(--signal)] text-black"
               >
                 Start a conversation
               </ActionLink>

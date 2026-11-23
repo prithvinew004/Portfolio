@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { projects } from "@/content/resume";
 import CardSwap, { Card, type CardSwapHandle } from "@/components/ui/card-swap";
@@ -13,48 +14,48 @@ export function HeroProjectStack() {
   const activeProject = projects[activeIndex];
 
   return (
-    <div className="min-w-0" data-hero-stack>
+    <div className="min-w-0 lg:-mr-12" data-hero-stack>
       <div className="hero-stack-stage">
         <CardSwap
           ref={swapRef}
-          width={600}
-          height={410}
-          cardDistance={56}
-          verticalDistance={46}
-          depth={78}
-          skewAmount={3.5}
+          width={780}
+          height={500}
+          cardDistance={64}
+          verticalDistance={48}
+          depth={82}
+          skewAmount={2.4}
           visibleCards={projects.length}
-          delay={5600}
+          delay={5800}
           autoplay={reduceMotion === false}
           pauseOnHover
           draggable={!reduceMotion}
-          speed={reduceMotion ? 4 : 1.15}
-          bounce={reduceMotion ? 0 : 0.18}
-          parallax={reduceMotion ? 0 : 0.24}
-          hoverSpread={reduceMotion ? 0 : 0.08}
-          dim={0.34}
-          cardRadius={22}
+          speed={reduceMotion ? 4 : 1.08}
+          bounce={reduceMotion ? 0 : 0.16}
+          parallax={reduceMotion ? 0 : 0.2}
+          hoverSpread={reduceMotion ? 0 : 0.07}
+          dim={0.38}
+          cardRadius={12}
           intro={!reduceMotion}
-          theme="light"
+          theme="dark"
           ariaLabel="Featured project websites"
           onChange={setActiveIndex}
         >
           {projects.map((project, index) => (
-            <Card key={project.id} className="bg-[var(--surface)]">
-              <div className="flex h-full flex-col p-2">
-                <div className="flex h-11 min-w-0 items-center justify-between gap-4 px-3 text-sm">
-                  <span className="truncate font-semibold text-[var(--fg)]">{project.title}</span>
-                  <span className="shrink-0 tabular-nums text-[var(--muted)]">
-                    {String(index + 1).padStart(2, "0")}
+            <Card key={project.id} className="bg-[#11110f]">
+              <div className="flex h-full flex-col p-2.5">
+                <div className="flex h-12 min-w-0 items-center justify-between gap-4 px-3 text-sm">
+                  <span className="truncate font-medium text-white">{project.title}</span>
+                  <span className="shrink-0 font-mono text-xs tabular-nums text-[var(--signal)]">
+                    {String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
                   </span>
                 </div>
-                <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--node)]">
+                <div className="relative min-h-0 flex-1 overflow-hidden rounded-md border border-white/10 bg-[#1b1b18]">
                   <Image
                     src={project.image.src}
                     alt={project.image.alt}
                     fill
                     priority={index < 2}
-                    sizes="(min-width: 1024px) 44vw, 90vw"
+                    sizes="(min-width: 1024px) 54vw, 94vw"
                     className="object-cover object-top"
                     draggable={false}
                   />
@@ -65,42 +66,43 @@ export function HeroProjectStack() {
         </CardSwap>
       </div>
 
-      <div className="mt-5 flex flex-col gap-4 border-t border-[var(--line)] pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-[var(--fg)]" aria-live="polite">
-            {activeProject.title}
-          </p>
-          <p className="mt-1 text-sm tabular-nums text-[var(--muted)]">
-            {String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+      <div className="hero-stack-meta mt-2 grid gap-4 border-t border-[var(--line)] pt-4 sm:grid-cols-[1fr_auto] sm:items-center">
+        <div className="min-w-0" aria-live="polite">
+          <p className="truncate text-base font-medium text-[var(--fg)]">{activeProject.title}</p>
+          <p className="mt-1 truncate text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+            {activeProject.statusLabel}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            className="stack-control"
+            className="stack-control stack-control-icon"
             onClick={() => swapRef.current?.prev()}
+            aria-label="Previous project"
           >
-            Previous
+            <ArrowLeft aria-hidden className="size-4" />
           </button>
           <button
             type="button"
-            className="stack-control"
+            className="stack-control stack-control-icon"
             onClick={() => swapRef.current?.next()}
+            aria-label="Next project"
           >
-            Next
+            <ArrowRight aria-hidden className="size-4" />
           </button>
           <a
             href={activeProject.liveUrl}
             target="_blank"
             rel="noreferrer noopener"
-            className="stack-control stack-control-primary"
+            className="stack-control stack-control-primary gap-2"
           >
-            Visit live site
+            Live site
+            <ArrowUpRight aria-hidden className="size-4" />
             <span className="sr-only">: {activeProject.title} (opens in a new tab)</span>
           </a>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+      <p className="mt-3 text-xs leading-5 text-[var(--dim)]">
         Drag the front card, use the controls, or focus the stack and press an arrow key.
       </p>
     </div>

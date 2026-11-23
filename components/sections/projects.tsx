@@ -1,161 +1,230 @@
-import { independentProjects, projects, sectionN, supportingProjects } from "@/content/resume";
-import { ActionLink } from "@/components/ui/action-link";
+"use client";
+
+import { Braces, FileStack, ImageIcon, Trophy } from "lucide-react";
+import FlowingMenu, { type FlowingMenuItem } from "@/components/FlowingMenu";
 import {
-  CutoutCard,
-  CutoutCardAction,
-  CutoutCardContent,
-  CutoutCardFooter,
-  CutoutCardImage,
-  CutoutCardInsetLabel,
-  CutoutCardMedia,
-  CutoutCorner,
-  cutoutCardSurfaceClassName,
-} from "@/components/ui/cutout-card";
-import { Pill } from "@/components/ui/pill";
-import { PrimaryProjectCard, ProjectCard } from "@/components/ui/project-card";
-import { SectionIntro } from "@/components/ui/section-intro";
-import { CONTENT, GUTTER, SECTION_Y } from "@/lib/section";
-import { cn } from "@/lib/utils";
+  CollectionGridDisclosure,
+  type Collection,
+} from "@/components/watermelon/collection-grid-disclosure";
+import { Safari } from "@/components/ui/safari";
+import { independentProjects, projects, supportingProjects } from "@/content/resume";
+import { CONTENT, GUTTER } from "@/lib/section";
+
+const workItems: FlowingMenuItem[] = projects.map((project) => ({
+  text: project.title.replace(" · Dr Raja Neuro Care", ""),
+  marquee: project.title,
+  image: project.image.src,
+  meta: project.capabilities[0],
+  link: project.liveUrl,
+}));
+
+const independentById = new Map(independentProjects.map((project) => [project.id, project]));
+const supporting = supportingProjects[0];
+
+const toolCollections: readonly Collection[] = [
+  {
+    id: "product-system",
+    name: "Full-stack product system",
+    description: "One connected product flow spanning members, payments, scheduled work, charity choice, and admin review.",
+    items: [
+      {
+        id: "golfgives",
+        name: independentById.get("golfgives")!.title,
+        status: independentById.get("golfgives")!.statusLabel,
+        summary: independentById.get("golfgives")!.summary,
+        technologies: independentById.get("golfgives")!.capabilities,
+        icon: Trophy,
+        liveUrl: independentById.get("golfgives")!.liveUrl!,
+        repoUrl: independentById.get("golfgives")!.repoUrl,
+      },
+    ],
+  },
+  {
+    id: "browser-tools",
+    name: "Browser tool suite",
+    description: "Focused utilities for documents, developer tasks, and images—organized for fast discovery and direct use.",
+    items: [
+      {
+        id: "pdftoolkit",
+        name: independentById.get("pdftoolkit")!.title,
+        status: independentById.get("pdftoolkit")!.statusLabel,
+        summary: independentById.get("pdftoolkit")!.summary,
+        technologies: independentById.get("pdftoolkit")!.capabilities,
+        icon: FileStack,
+        liveUrl: independentById.get("pdftoolkit")!.liveUrl!,
+        repoUrl: independentById.get("pdftoolkit")!.repoUrl,
+      },
+      {
+        id: "devtoolkit",
+        name: independentById.get("devtoolkit")!.title,
+        status: independentById.get("devtoolkit")!.statusLabel,
+        summary: independentById.get("devtoolkit")!.summary,
+        technologies: independentById.get("devtoolkit")!.capabilities,
+        icon: Braces,
+        liveUrl: independentById.get("devtoolkit")!.liveUrl!,
+        repoUrl: independentById.get("devtoolkit")!.repoUrl,
+      },
+      {
+        id: "imagetoolkit",
+        name: supporting.title,
+        status: supporting.statusLabel,
+        summary: supporting.summary,
+        technologies: ["Image workflows", "Conversion", "Compression", "Browser tools"],
+        icon: ImageIcon,
+        liveUrl: supporting.liveUrl,
+        repoUrl: supporting.repoUrl,
+      },
+    ],
+  },
+];
 
 export function Projects() {
-  return (
-    <section id="projects" aria-labelledby="projects-title" className={`${GUTTER} ${SECTION_Y}`}>
-      <div className={`${CONTENT} mx-auto`}>
-        <SectionIntro
-          n={sectionN("projects")}
-          label="Selected work"
-          title="Real products, given room to speak."
-          titleId="projects-title"
-          description={
-            <p>
-              Four published product and organization surfaces, followed by independent builds.
-              Every claim stays within what the public work can show.
-            </p>
-          }
-        />
+  const primary = projects[0];
 
-        <PrimaryProjectCard project={projects[0]} />
-        <div className="mt-6 border-t border-[var(--line)]">
-          {projects.slice(1).map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
+  return (
+    <>
+      <section
+        id="projects"
+        aria-labelledby="projects-title"
+        className="border-b border-[var(--line)] bg-[var(--bg)] text-[var(--fg)]"
+      >
+        <div className={`${CONTENT} ${GUTTER} mx-auto pb-10 pt-24 sm:pb-14 sm:pt-28`}>
+          <div className="grid gap-6 border-b border-[var(--line)] pb-7 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="section-kicker">01 / Selected work</p>
+              <h2
+                id="projects-title"
+                className="mt-5 max-w-[11ch] text-balance font-sans text-[clamp(3rem,7vw,6.75rem)] font-normal leading-[0.88] tracking-[-0.07em]"
+              >
+                Pick a project. Let the work move.
+              </h2>
+            </div>
+            <div className="lg:justify-self-end">
+              <p className="max-w-xl text-pretty text-base leading-7 text-[var(--muted)] sm:text-lg sm:leading-8">
+                Four public product and organization surfaces. Hover or focus a row to bring its real interface into the index.
+              </p>
+              <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--dim)]">
+                Hover / focus / tap to explore
+              </p>
+            </div>
+          </div>
         </div>
 
-        <section aria-labelledby="independent-work-title" className="mt-24 sm:mt-28">
-          <div className="grid gap-5 border-b border-[var(--line)] pb-7 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div className="h-[68svh] min-h-[31rem] max-h-[52rem] border-b border-[var(--line)]">
+          <FlowingMenu
+            items={workItems}
+            speed={54}
+            direction="alternate"
+            followCursor={0.32}
+            duration={0.48}
+            stretch={0.55}
+            magnet={0.18}
+            bandRadius={0}
+            textColor="var(--fg)"
+            bgColor="var(--bg)"
+            marqueeBgColor="var(--signal)"
+            marqueeTextColor="#090a08"
+            borderColor="var(--line)"
+            align="left"
+            showIndex
+            showArrow
+            imageShape="rounded"
+            intro={false}
+            ariaLabel="Selected project websites"
+            className="work-flowing-menu"
+          />
+        </div>
+      </section>
+
+      <section
+        id={`project-${primary.id}`}
+        aria-labelledby="primary-case-study-title"
+        className="case-study-stage overflow-hidden bg-[var(--paper)] text-[var(--paper-ink)]"
+      >
+        <div className={`${CONTENT} ${GUTTER} mx-auto py-24 sm:py-28 lg:py-36`}>
+          <div className="grid gap-8 border-b border-black/20 pb-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
-              <p className="text-sm font-semibold text-[var(--accent)]">Independent products</p>
-              <h3
-                id="independent-work-title"
-                className="mt-3 max-w-xl text-balance font-display text-4xl font-semibold leading-tight sm:text-5xl"
+              <p className="section-kicker !text-black/65">02 / Primary evidence</p>
+              <h2
+                id="primary-case-study-title"
+                className="mt-5 max-w-[12ch] text-balance font-sans text-[clamp(2.8rem,6.5vw,6.25rem)] font-normal leading-[0.9] tracking-[-0.065em]"
               >
-                Tools that make implementation depth visible.
-              </h3>
+                A clinical entry point designed for trust.
+              </h2>
             </div>
-            <p className="max-w-xl text-pretty leading-7 text-[var(--muted)]">
-              Public experiments and products covering multi-role workflows, browser files, and
-              focused developer utilities.
+            <p className="max-w-2xl text-pretty text-lg leading-8 text-black/70 lg:justify-self-end">
+              {primary.summary}
             </p>
           </div>
 
-          <ul className="mt-8 grid gap-6 md:grid-cols-2">
-            {independentProjects.map((project, index) => (
-              <li
-                key={project.id}
-                id={`project-${project.id}`}
-                className={cn("h-full", index === 2 && "md:col-span-2")}
+          <div className="case-study-media relative mt-10 overflow-hidden bg-[var(--signal)] px-3 pb-0 pt-12 sm:px-10 sm:pt-16 lg:px-20 lg:pt-24">
+            <span className="absolute left-5 top-4 text-xs font-medium uppercase tracking-[0.16em] text-black/55 sm:left-8 sm:top-6">
+              Live public surface / verified {primary.verifiedOn}
+            </span>
+            <Safari
+              imageSrc={primary.image.src}
+              imageAlt={primary.image.alt}
+              imagePriority
+              url="dev.curoh.com/login/dr-raja-neuro-care"
+              className="translate-y-2 drop-shadow-[0_36px_34px_rgba(0,0,0,0.28)] sm:translate-y-4"
+            />
+          </div>
+
+          <div className="mt-10 grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-black/65">Contribution</p>
+              <p className="mt-4 max-w-md text-pretty text-xl leading-8">
+                {primary.contribution}
+              </p>
+              <a
+                href={primary.liveUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="mt-7 inline-flex min-h-11 items-center border-b border-black font-medium"
               >
-                <CutoutCard
-                  className={cn(
-                    cutoutCardSurfaceClassName,
-                    "flex h-full flex-col bg-[var(--surface)]",
-                    index === 2 && "md:grid md:grid-cols-[0.9fr_1.1fr]"
-                  )}
-                  trackPointerHover={false}
-                >
-                  <CutoutCardMedia
-                    className={cn("h-64 sm:h-72", index === 2 && "md:h-full md:min-h-96")}
-                  >
-                    <CutoutCardImage
-                      src={project.image.src}
-                      alt={project.image.alt}
-                      className="object-cover object-top motion-reduce:transition-none"
-                    />
-                    <CutoutCardInsetLabel className="bottom-0 left-0 rounded-tr-3xl bg-[var(--surface)] px-5 py-3">
-                      <span className="text-sm font-semibold text-[var(--muted)]">
-                        {project.statusLabel}
-                      </span>
-                      <CutoutCorner className="absolute -right-8 bottom-0 rotate-90 text-[var(--surface)]" />
-                      <CutoutCorner className="absolute -top-8 left-0 rotate-90 text-[var(--surface)]" />
-                    </CutoutCardInsetLabel>
-                    <CutoutCardAction className="right-4 top-4" revealOnHover={false}>
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="inline-flex min-h-10 items-center rounded-full bg-[var(--fg)] px-4 text-sm font-semibold text-[var(--surface)]"
-                      >
-                        Live site
-                        <span className="sr-only">: {project.title} (opens in a new tab)</span>
-                      </a>
-                    </CutoutCardAction>
-                  </CutoutCardMedia>
+                Open the live product ↗
+                <span className="sr-only">{primary.title} (opens in a new tab)</span>
+              </a>
+            </div>
 
-                  <CutoutCardContent className="flex flex-1 flex-col p-6 sm:p-7">
-                    <h4 className="text-balance font-display text-3xl font-semibold">{project.title}</h4>
-                    <p className="mt-4 text-pretty leading-7 text-[var(--muted)]">{project.summary}</p>
-                    <ul aria-label={`${project.title} technologies`} className="mt-6 flex flex-wrap gap-2">
-                      {project.capabilities.slice(0, 4).map((capability) => (
-                        <li key={capability}>
-                          <Pill
-                            variant="outline"
-                            className="border-[var(--line)] bg-transparent text-[var(--muted)]"
-                          >
-                            {capability}
-                          </Pill>
-                        </li>
-                      ))}
-                    </ul>
-                    <CutoutCardFooter className="mt-auto border-t border-[var(--line)] pt-6">
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="inline-flex min-h-11 items-center font-semibold underline decoration-[var(--line-strong)] underline-offset-4 hover:text-[var(--accent)]"
-                      >
-                        View source
-                        <span className="sr-only">: {project.title} (opens in a new tab)</span>
-                      </a>
-                    </CutoutCardFooter>
-                  </CutoutCardContent>
-                </CutoutCard>
-              </li>
-            ))}
-          </ul>
-        </section>
+            <div className="border-t border-black/20">
+              {primary.capabilities.map((capability, index) => (
+                <div key={capability} className="grid grid-cols-[3rem_1fr] gap-4 border-b border-black/20 py-5 sm:py-6">
+                  <span className="text-xs tabular-nums text-black/65">0{index + 1}</span>
+                  <span className="font-display text-[clamp(1.6rem,3vw,2.75rem)] font-medium leading-none tracking-[-0.035em]">
+                    {capability}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <aside className="mt-8 flex flex-col justify-between gap-6 rounded-3xl bg-[var(--fg)] p-7 text-[var(--surface)] sm:p-9 lg:flex-row lg:items-center">
-          <div>
-            <p className="text-sm font-semibold text-[var(--bg)]/65">Supporting work</p>
-            <h3 className="mt-3 text-balance font-display text-3xl font-semibold">
-              {supportingProjects[0].title}
-            </h3>
-            <p className="mt-3 max-w-2xl text-pretty text-[var(--bg)]/75">
-              {supportingProjects[0].summary}
+      <section
+        id="independent-work"
+        aria-labelledby="independent-work-title"
+        className={`${GUTTER} border-y border-[var(--line)] bg-[var(--bg)] py-24 text-[var(--fg)] sm:py-28 lg:py-36`}
+      >
+        <div className={`${CONTENT} mx-auto`}>
+          <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="section-kicker">03 / Independent products</p>
+              <h2
+                id="independent-work-title"
+                className="mt-5 max-w-[10ch] text-balance font-sans text-[clamp(2.8rem,6vw,6rem)] font-normal leading-[0.9] tracking-[-0.065em]"
+              >
+                Open a collection. See the system inside.
+              </h2>
+            </div>
+            <p className="max-w-xl text-pretty text-lg leading-8 text-[var(--muted)] lg:justify-self-end">
+              Multi-role workflows and browser utilities, grouped by the job they do rather than presented as another wall of cards.
             </p>
           </div>
-          <ActionLink
-            href={supportingProjects[0].liveUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            variant="outline"
-            className="max-w-full border-[var(--surface)]/40 text-[var(--surface)] hover:border-[var(--surface)] hover:text-[var(--surface)]"
-          >
-            Open ImageToolkit
-            <span className="sr-only">(opens in a new tab)</span>
-          </ActionLink>
-        </aside>
-      </div>
-    </section>
+
+          <CollectionGridDisclosure collections={toolCollections} className="mt-12 sm:mt-16" />
+        </div>
+      </section>
+    </>
   );
 }
