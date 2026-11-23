@@ -6,8 +6,8 @@
   color-scheme: light;
   --bg: #f4efe6;
   --surface: #fbf8f2;
-  --fg: #201e1a;
-  --muted: #656058;
+  --fg: #1b1916;
+  --muted: #625d55;
   --dim: #746d63;
   --line: #d8d0c3;
   --line-strong: #aaa094;
@@ -17,7 +17,7 @@
   --ac: var(--accent);
   --support: #355c5a;
   --dur: 160ms;
-  --radius: 1rem;
+  --radius: 1.25rem;
   --header-h: 4.5rem;
 }
 
@@ -36,45 +36,62 @@
   padding-inline: 0.8rem;
   color: var(--muted);
   font-size: 0.875rem;
-  transition: color var(--dur) ease-out, background-color var(--dur) ease-out;
+  position: relative;
+  z-index: 10;
+  transition: color var(--dur) ease-out;
 }
 
 .nav-link[aria-current="location"] {
-  background: var(--fg);
   color: var(--surface);
 }
 
-.hero-proof {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  overflow: hidden;
+.hero-stack-stage {
+  height: 20rem;
+  min-width: 0;
 }
 
-.hero-proof-card {
-  position: relative;
-  min-height: 4.5rem;
-  overflow: hidden;
-  border-bottom: 1px solid var(--line);
-  background: var(--node);
-  isolation: isolate;
+@media (min-width: 640px) {
+  .hero-stack-stage {
+    height: 28rem;
+  }
 }
 
-.hero-proof-card:nth-child(odd) {
-  border-right: 1px solid var(--line);
+@media (min-width: 1024px) {
+  .hero-stack-stage {
+    height: 35rem;
+  }
 }
 
-.hero-proof-card:nth-last-child(-n + 2) {
-  border-bottom: 0;
+.stack-control {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding-inline: 1rem;
+  color: var(--fg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color var(--dur) ease-out, border-color var(--dur) ease-out,
+    transform var(--dur) ease-out;
+}
+
+.stack-control:active {
+  transform: scale(0.97);
+}
+
+.stack-control-primary {
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--surface);
 }
 
 .project-media {
   position: relative;
   display: block;
   overflow: hidden;
-  border-bottom: 1px solid var(--line);
+  border: 1px solid var(--line);
   background: var(--node);
   isolation: isolate;
   transition: opacity var(--dur) ease-out;
@@ -89,9 +106,15 @@
     color: var(--accent);
   }
 
-  .hero-proof-card:hover,
-  .hero-proof-card:focus-visible {
-    opacity: 0.84;
+  .stack-control:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .stack-control-primary:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--surface);
   }
 
   .project-media:hover {
@@ -131,6 +154,7 @@
 
   section[id],
   article[id],
+  li[id],
   footer[id] {
     scroll-margin-top: calc(var(--header-h) + 1rem);
   }

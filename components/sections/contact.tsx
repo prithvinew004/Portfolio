@@ -1,4 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
 import { contact, profile, sectionN, socials } from "@/content/resume";
 import { CopyEmail } from "@/components/ui/copy-email";
 import { SectionLabel } from "@/components/ui/section-label";
@@ -12,7 +11,7 @@ export function Contact() {
     <footer
       id="contact"
       aria-labelledby="contact-title"
-      className={`${GUTTER} bg-[var(--fg)] pb-8 pt-24 text-[var(--surface)] sm:pt-28`}
+      className={`${GUTTER} bg-[var(--fg)] pb-8 pt-24 text-[var(--surface)] sm:pt-32`}
     >
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel
@@ -22,11 +21,11 @@ export function Contact() {
           Contact
         </SectionLabel>
 
-        <div className="mt-7 grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:items-end">
           <div className="min-w-0">
             <h2
               id="contact-title"
-              className="max-w-[17ch] text-balance font-display text-[clamp(2.5rem,5vw,3.25rem)] font-semibold leading-[1.04]"
+              className="max-w-[14ch] text-balance font-display text-[clamp(3rem,7vw,5.75rem)] font-semibold leading-[0.96]"
             >
               {contact.heading[0]} {contact.heading[1]}
             </h2>
@@ -41,7 +40,7 @@ export function Contact() {
               href={`mailto:${profile.email}`}
               className="inline-flex min-h-12 max-w-full items-center gap-3 break-all text-lg font-semibold text-[var(--surface)] underline decoration-[var(--accent)] decoration-2 underline-offset-8 sm:text-xl"
             >
-              {profile.email} <ArrowUpRight aria-hidden className="size-5" />
+              {profile.email}
             </a>
             <div className="mt-5">
               <CopyEmail email={profile.email} />
@@ -60,7 +59,7 @@ export function Contact() {
                   rel="noreferrer noopener"
                   className="inline-flex min-h-11 items-center gap-2 text-[var(--bg)]/75 hover:text-[var(--surface)]"
                 >
-                  {social.label} <ArrowUpRight aria-hidden className="size-4" />
+                  {social.label}
                   <span className="sr-only">(opens in a new tab)</span>
                 </a>
               </li>

@@ -1,21 +1,16 @@
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type ActionLinkProps = React.ComponentProps<"a"> & {
   variant?: "primary" | "outline" | "text";
-  direction?: "down" | "up";
 };
 
 export function ActionLink({
   children,
   className,
   variant = "text",
-  direction = "up",
   ...props
 }: ActionLinkProps) {
-  const Icon = direction === "down" ? ArrowDownRight : ArrowUpRight;
-
   return (
     <Button
       render={<a {...props} />}
@@ -33,7 +28,6 @@ export function ActionLink({
       )}
     >
       {children}
-      <Icon aria-hidden className="size-4 shrink-0" />
     </Button>
   );
 }

@@ -7,13 +7,15 @@ import { Contact } from "@/components/sections/contact";
 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      <Projects />
-      <Skills />
-      <Experience />
-      <GitHubActivity />
+    <>
+      <main>
+        <Hero />
+        <Projects />
+        <Skills />
+        <Experience />
+        <GitHubActivity />
+      </main>
       <Contact />
-    </main>
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Menu, X } from "lucide-react";
 import { profile, sections } from "@/content/resume";
 import { ActionLink } from "@/components/ui/action-link";
+import { AnimatedBackground } from "@/components/ui/animated-background";
 import { GUTTER } from "@/lib/section";
 
 export function Nav() {
@@ -40,17 +41,23 @@ export function Nav() {
         </a>
 
         <ul className="hidden items-center gap-1 lg:flex">
-          {sections.map((section) => (
-            <li key={section.id}>
-              <a
-                href={`#${section.id}`}
-                aria-current={activeSection === section.id ? "location" : undefined}
-                className="nav-link"
-              >
-                {section.label}
-              </a>
-            </li>
-          ))}
+          <AnimatedBackground
+            defaultValue={activeSection || undefined}
+            className="rounded-full bg-[var(--fg)]"
+            transition={{ type: "spring", duration: 0.42, bounce: 0.08 }}
+          >
+            {sections.map((section) => (
+              <li key={section.id} data-id={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  aria-current={activeSection === section.id ? "location" : undefined}
+                  className="nav-link"
+                >
+                  {section.label}
+                </a>
+              </li>
+            ))}
+          </AnimatedBackground>
         </ul>
 
         <ActionLink

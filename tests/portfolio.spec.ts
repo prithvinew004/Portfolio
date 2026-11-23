@@ -63,31 +63,30 @@ test("baseline has no runtime, overflow, or serious accessibility failures", asy
 });
 
 test("first viewport explains the offer and exposes both primary actions", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const viewport of [viewports[1], viewports[4]]) {
     await page.setViewportSize(viewport);
     await page.goto("/");
 
     await expect(
-      page.getByRole("heading", { level: 1, name: /product-focused full-stack developer/i })
+      page.getByRole("heading", { level: 1, name: /clear products.*useful workflows.*built end to end/i })
     ).toBeVisible();
     await expect(page.getByText(/turn product ideas into clear, usable web experiences/i)).toBeVisible();
 
-    const contact = page.getByRole("link", { name: /start a conversation/i }).last();
-    const work = page.getByRole("link", { name: /see selected work/i });
+    const hero = page.locator("#hero");
+    const contact = hero.getByRole("link", { name: /start a conversation/i });
+    const work = hero.getByRole("link", { name: /see selected work/i });
     await expect(contact).toHaveAttribute("href", "#contact");
     await expect(work).toHaveAttribute("href", "#projects");
     await expect(contact).toBeInViewport();
     await expect(work).toBeInViewport();
-    const evidence = page.locator("[data-hero-proof]");
-    await expect(evidence).toHaveCount(4);
-    for (const [index, href] of [
-      "#project-curoh-dr-raja",
-      "#project-digifrills",
-      "#project-navachis",
-      "#project-lomaa",
-    ].entries()) {
-      await expect(evidence.nth(index)).toHaveAttribute("href", href);
-    }
+    const stack = page.getByRole("region", { name: "Featured project websites" });
+    await expect(stack).toBeVisible();
+    await expect(stack.locator("[data-swap-index]")).toHaveCount(4);
+    await expect(page.locator("[data-hero-stack]").getByRole("link", { name: /visit live site/i })).toHaveAttribute(
+      "href",
+      "https://dev.curoh.com/login/dr-raja-neuro-care"
+    );
     await expect(page.getByText(/^Loading$/i)).toHaveCount(0);
 
     await page.keyboard.press("Tab");
@@ -161,7 +160,7 @@ test("selected work is evidence-backed and never uses contact as a fake case stu
     const media = article.locator("[data-project-media]");
     await expect(media).toHaveAttribute("href", destinations.shift()!);
     await expect(media).toHaveAccessibleName(new RegExp(`open ${title}`, "i"));
-    await expect(media.getByText("Live", { exact: true })).toBeVisible();
+    await expect(media.getByText("Live site", { exact: true })).toBeVisible();
   }
 
   await expect(page.getByText("8 public projects")).toBeVisible();
@@ -173,7 +172,7 @@ test("selected work is evidence-backed and never uses contact as a fake case stu
   await expect(work.getByText(/product screenshot|api docs|mobile screens/i)).toHaveCount(0);
 });
 
-test("editorial typography stays within the restrained design scale", async ({ page }) => {
+test("editorial typography uses the approved premium scale", async ({ page }) => {
   await page.setViewportSize(viewports[4]);
   await page.goto("/");
 
@@ -189,10 +188,12 @@ test("editorial typography stays within the restrained design scale", async ({ p
     };
   });
 
-  expect(sizes.hero).toBeLessThanOrEqual(56);
-  expect(Math.max(...sizes.sections)).toBeLessThanOrEqual(36);
-  expect(sizes.primaryProject).toBeLessThanOrEqual(30);
-  expect(Math.max(...sizes.supportingProjects)).toBeLessThanOrEqual(24);
+  expect(sizes.hero).toBeLessThanOrEqual(88);
+  expect(sizes.hero).toBeGreaterThanOrEqual(72);
+  expect(Math.max(...sizes.sections)).toBeLessThanOrEqual(64);
+  expect(Math.max(...sizes.sections)).toBeGreaterThanOrEqual(48);
+  expect(sizes.primaryProject).toBeLessThanOrEqual(64);
+  expect(Math.max(...sizes.supportingProjects)).toBeLessThanOrEqual(52);
   expect(sizes.body).toBe(16);
 });
 
@@ -216,7 +217,7 @@ test("capabilities cite work and unresolved employment claims stay unpublished",
 
   const capabilities = page.locator("#skills");
   await expect(
-    capabilities.getByRole("heading", { level: 2, name: /capabilities tied to real work/i })
+    capabilities.getByRole("heading", { level: 2, name: /a stack is useful when the workflow holds together/i })
   ).toBeVisible();
   await expect(capabilities.getByRole("article")).toHaveCount(3);
   await expect(capabilities.getByRole("link", { name: /curoh/i }).first()).toHaveAttribute(
@@ -247,6 +248,12 @@ test("the complete page stays usable across target viewports and reduced motion"
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe(
     "auto"
   );
+
+  const activeProject = page.locator('[data-hero-stack] [aria-live="polite"]');
+  await expect(activeProject).toHaveText("Curoh · Dr Raja Neuro Care");
+  await expect(activeProject).toBeVisible();
+  await page.waitForTimeout(5800);
+  await expect(activeProject).toHaveText("Curoh · Dr Raja Neuro Care");
 
   await page.setViewportSize({ width: 780, height: 844 });
   await page.goto("/");
@@ -302,7 +309,7 @@ test("public activity discloses its source and covered-through date", async ({ p
     "href",
     "https://github.com/prithvinew004"
   );
-  await expect(page.getByRole("heading", { name: /real work, shown with context/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /real products, given room to speak/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /start a conversation/i }).last()).toHaveAttribute(
     "href",
     "#contact"

@@ -62,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }}
         />
-        <ScrollProgress className="z-[60] h-0.5 bg-none bg-[var(--accent)]" />
+        <ScrollProgress className="h-0.5" />
         <Nav />
         {children}
       </body>

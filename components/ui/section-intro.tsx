@@ -21,10 +21,10 @@ export function SectionIntro({
   return (
     <div className={cn("border-b border-[var(--line)] pb-10 sm:pb-12", className)}>
       <SectionLabel n={n}>{label}</SectionLabel>
-      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(20rem,1fr)] lg:items-end lg:gap-16">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] lg:items-end lg:gap-16">
         <h2
           id={titleId}
-          className="max-w-[18ch] text-balance font-display text-[clamp(2rem,3vw,2.25rem)] font-semibold leading-[1.05]"
+          className="max-w-[18ch] text-balance font-display text-[clamp(2.5rem,5vw,4rem)] font-semibold leading-[0.98]"
         >
           {title}
         </h2>
