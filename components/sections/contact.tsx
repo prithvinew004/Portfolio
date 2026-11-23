@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { contact, profile, sectionN, socials } from "@/content/resume";
 import { CopyEmail } from "@/components/ui/copy-email";
 import { SectionLabel } from "@/components/ui/section-label";
+import { Separator } from "@/components/ui/separator";
 import { CONTENT, GUTTER } from "@/lib/section";
 
 export function Contact() {
@@ -11,7 +12,7 @@ export function Contact() {
     <footer
       id="contact"
       aria-labelledby="contact-title"
-      className={`${GUTTER} bg-[var(--fg)] pb-8 pt-[clamp(6rem,14vh,11rem)] text-[var(--surface)]`}
+      className={`${GUTTER} bg-[var(--fg)] pb-8 pt-24 text-[var(--surface)] sm:pt-28`}
     >
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel
@@ -21,15 +22,15 @@ export function Contact() {
           Contact
         </SectionLabel>
 
-        <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="mt-7 grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="min-w-0">
             <h2
               id="contact-title"
-              className="max-w-[11ch] font-display text-[clamp(2.5rem,8vw,8.5rem)] font-extrabold leading-[0.88] tracking-[-0.055em]"
+              className="max-w-[17ch] text-balance font-display text-[clamp(2.5rem,5vw,3.25rem)] font-semibold leading-[1.04]"
             >
               {contact.heading[0]} {contact.heading[1]}
             </h2>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--bg)]/70">
+            <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-[var(--bg)]/70">
               Share the workflow, product, or problem you are trying to move forward. A concise
               email is enough to start.
             </p>
@@ -48,7 +49,8 @@ export function Contact() {
           </div>
         </div>
 
-        <div className="mt-24 flex flex-col gap-7 border-t border-[var(--surface)]/20 pt-7 sm:flex-row sm:items-center sm:justify-between">
+        <Separator className="mt-16 bg-[var(--surface)]/20" />
+        <div className="flex flex-col gap-7 pt-7 sm:flex-row sm:items-center sm:justify-between">
           <ul className="flex flex-wrap gap-5">
             {externalSocials.map((social) => (
               <li key={social.label}>

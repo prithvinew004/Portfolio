@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { profile, socials } from "@/content/resume";
 
 // Keep the display face variable so all editorial heading weights share one font asset.
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }}
         />
+        <ScrollProgress className="z-[60] h-0.5 bg-none bg-[var(--accent)]" />
         <Nav />
         {children}
       </body>

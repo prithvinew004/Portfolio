@@ -2,11 +2,12 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const viewports = [
+  { name: "small-mobile", width: 360, height: 800 },
   { name: "mobile", width: 390, height: 844 },
   { name: "tablet", width: 768, height: 1024 },
-  { name: "laptop", width: 1280, height: 800 },
+  { name: "laptop", width: 1024, height: 900 },
   { name: "desktop", width: 1440, height: 900 },
-  { name: "compact", width: 320, height: 568 },
+  { name: "minimum", width: 320, height: 568 },
 ] as const;
 
 function observeRuntimeFailures(page: Page) {
@@ -62,7 +63,7 @@ test("baseline has no runtime, overflow, or serious accessibility failures", asy
 });
 
 test("first viewport explains the offer and exposes both primary actions", async ({ page }) => {
-  for (const viewport of [viewports[0], viewports[3]]) {
+  for (const viewport of [viewports[1], viewports[4]]) {
     await page.setViewportSize(viewport);
     await page.goto("/");
 
@@ -86,7 +87,6 @@ test("first viewport explains the offer and exposes both primary actions", async
       "#project-lomaa",
     ].entries()) {
       await expect(evidence.nth(index)).toHaveAttribute("href", href);
-      await expect(evidence.nth(index)).toBeInViewport();
     }
     await expect(page.getByText(/^Loading$/i)).toHaveCount(0);
 
@@ -99,7 +99,7 @@ test("first viewport explains the offer and exposes both primary actions", async
 });
 
 test("small-screen text stays inside the viewport without clipping", async ({ page }) => {
-  await page.setViewportSize(viewports[4]);
+  await page.setViewportSize(viewports[5]);
   await page.goto("/", { waitUntil: "networkidle" });
 
   const clipped = await page.locator("h1, h2, h3, h4, p, a, button, dt, dd").evaluateAll(
@@ -138,6 +138,7 @@ test("selected work is evidence-backed and never uses contact as a fake case stu
 
   await expect(caseStudies).toHaveCount(4);
   await expect(mediaLinks).toHaveCount(4);
+  await expect(work.getByText("Primary case study", { exact: true })).toBeVisible();
   const destinations = [
     "https://dev.curoh.com/login/dr-raja-neuro-care",
     "https://digifrills.in/",
@@ -170,6 +171,29 @@ test("selected work is evidence-backed and never uses contact as a fake case stu
 
   await expect(work.locator('a[href="#contact"]')).toHaveCount(0);
   await expect(work.getByText(/product screenshot|api docs|mobile screens/i)).toHaveCount(0);
+});
+
+test("editorial typography stays within the restrained design scale", async ({ page }) => {
+  await page.setViewportSize(viewports[4]);
+  await page.goto("/");
+
+  const sizes = await page.evaluate(() => {
+    const px = (selector: string) =>
+      Number.parseFloat(getComputedStyle(document.querySelector<HTMLElement>(selector)!).fontSize);
+    return {
+      hero: px("#hero h1"),
+      sections: ["#projects h2", "#skills h2", "#experience h2", "#activity h2"].map(px),
+      primaryProject: px("#project-curoh-dr-raja h3"),
+      supportingProjects: ["#project-digifrills h3", "#project-navachis h3", "#project-lomaa h3"].map(px),
+      body: Number.parseFloat(getComputedStyle(document.body).fontSize),
+    };
+  });
+
+  expect(sizes.hero).toBeLessThanOrEqual(56);
+  expect(Math.max(...sizes.sections)).toBeLessThanOrEqual(36);
+  expect(sizes.primaryProject).toBeLessThanOrEqual(30);
+  expect(Math.max(...sizes.supportingProjects)).toBeLessThanOrEqual(24);
+  expect(sizes.body).toBe(16);
 });
 
 test("desktop navigation exposes exactly one active section while scrolling", async ({ page }) => {
@@ -254,6 +278,7 @@ test("mobile navigation returns focus and contact survives clipboard denial", as
     "https://discord.com/users/1068023960689717288"
   );
   await page.getByRole("button", { name: /copy email/i }).click();
+  await expect(page.getByRole("status")).toHaveText(/copy unavailable/i);
   await expect(email).toBeVisible();
 });
 

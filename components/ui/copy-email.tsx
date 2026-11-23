@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  CopyButton,
+  CopyButtonIcon,
+} from "@animate-ui/react/primitives/buttons/copy";
 import { Check, Copy } from "lucide-react";
 
 export function CopyEmail({ email }: { email: string }) {
@@ -12,7 +16,8 @@ export function CopyEmail({ email }: { email: string }) {
     return () => window.clearTimeout(timeout);
   }, [status]);
 
-  async function copy() {
+  async function copy(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
     try {
       await navigator.clipboard.writeText(email);
       setStatus("copied");
@@ -23,19 +28,19 @@ export function CopyEmail({ email }: { email: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <button
-        type="button"
+      <CopyButton
+        content={email}
+        copied={status === "copied"}
         onClick={copy}
         aria-label="Copy email address"
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-current px-4 text-sm font-medium"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-current bg-transparent px-4 text-sm font-medium transition-colors hover:bg-[var(--surface)] hover:text-[var(--fg)]"
       >
-        {status === "copied" ? (
-          <Check aria-hidden className="size-4" />
-        ) : (
-          <Copy aria-hidden className="size-4" />
-        )}
+        <CopyButtonIcon
+          icon={<Copy aria-hidden className="size-4" />}
+          copiedIcon={<Check aria-hidden className="size-4" />}
+        />
         Copy email
-      </button>
+      </CopyButton>
       <span aria-live="polite" role="status" className="text-sm text-current/70">
         {status === "copied"
           ? "Copied"

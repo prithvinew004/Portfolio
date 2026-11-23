@@ -1,30 +1,31 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   color-scheme: light;
-  --bg: #f2ede3;
-  --surface: #faf7f0;
-  --fg: #1d1b18;
-  --muted: #625e57;
-  --dim: #777067;
-  --line: #cfc6b8;
-  --hair: rgba(29, 27, 24, 0.18);
-  --node: #e7dfd2;
-  --accent: #ad4527;
+  --bg: #f4efe6;
+  --surface: #fbf8f2;
+  --fg: #201e1a;
+  --muted: #656058;
+  --dim: #746d63;
+  --line: #d8d0c3;
+  --line-strong: #aaa094;
+  --hair: rgba(32, 30, 26, 0.14);
+  --node: #e9e2d7;
+  --accent: #a94427;
   --ac: var(--accent);
   --support: #355c5a;
-  --dur: 220ms;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --radius: 1.25rem;
-  --header-h: 5rem;
+  --dur: 160ms;
+  --radius: 1rem;
+  --header-h: 4.5rem;
 }
 
 .nav-shell {
   border: 1px solid var(--hair);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  box-shadow: 0 16px 45px -28px rgba(29, 27, 24, 0.55);
-  backdrop-filter: blur(18px);
+  background: var(--surface);
+  box-shadow: 0 12px 30px -24px rgba(32, 30, 26, 0.5);
 }
 
 .nav-link {
@@ -35,7 +36,7 @@
   padding-inline: 0.8rem;
   color: var(--muted);
   font-size: 0.875rem;
-  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  transition: color var(--dur) ease-out, background-color var(--dur) ease-out;
 }
 
 .nav-link[aria-current="location"] {
@@ -45,115 +46,42 @@
 
 .hero-proof {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.4rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
 }
 
 .hero-proof-card {
   position: relative;
-  min-height: 3.5rem;
+  min-height: 4.5rem;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--fg) 24%, transparent);
-  border-radius: 0.65rem;
-  background: var(--surface);
-  box-shadow: 0 16px 40px -30px rgba(29, 27, 24, 0.7);
+  border-bottom: 1px solid var(--line);
+  background: var(--node);
   isolation: isolate;
 }
 
-.hero-proof-card::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  background: linear-gradient(to top, rgba(29, 27, 24, 0.48), transparent 55%);
+.hero-proof-card:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.hero-proof-card:nth-last-child(-n + 2) {
+  border-bottom: 0;
 }
 
 .project-media {
-  --spot-x: 50%;
-  --spot-y: 50%;
   position: relative;
   display: block;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) + 0.2rem);
-  background: var(--surface);
-  box-shadow: 0 30px 80px -48px rgba(29, 27, 24, 0.58);
-  isolation: isolate;
-  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
-}
-
-.project-media::after {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  background: radial-gradient(18rem circle at var(--spot-x) var(--spot-y), rgba(250, 247, 240, 0.24), transparent 62%);
-  content: "";
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur) var(--ease);
-}
-
-.project-media-bar {
-  display: flex;
-  height: 2.75rem;
-  align-items: center;
-  gap: 0.75rem;
   border-bottom: 1px solid var(--line);
-  padding-inline: 1rem;
-}
-
-.project-media-image {
-  position: relative;
-  display: block;
-  aspect-ratio: 1440 / 620;
-  overflow: hidden;
   background: var(--node);
+  isolation: isolate;
+  transition: opacity var(--dur) ease-out;
 }
 
 .project-media:active {
-  transform: scale(0.99);
-  transition-duration: 120ms;
-}
-
-@media (min-width: 1024px) {
-  .hero-proof {
-    position: relative;
-    display: block;
-    min-height: min(38rem, 72vh);
-  }
-
-  .hero-proof-card {
-    position: absolute;
-    width: min(82%, 25rem);
-    aspect-ratio: 1.42;
-    min-height: 0;
-    border-radius: 1rem;
-    box-shadow: 0 32px 80px -42px rgba(29, 27, 24, 0.72);
-  }
-
-  .hero-proof-card:nth-child(1) {
-    top: 3%;
-    left: 3%;
-    transform: rotate(-5deg);
-  }
-
-  .hero-proof-card:nth-child(2) {
-    top: 24%;
-    right: 0;
-    transform: rotate(4deg);
-  }
-
-  .hero-proof-card:nth-child(3) {
-    top: 48%;
-    left: 0;
-    transform: rotate(-2deg);
-  }
-
-  .hero-proof-card:nth-child(4) {
-    right: 3%;
-    bottom: 0;
-    transform: rotate(3deg);
-  }
+  opacity: 0.82;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -161,33 +89,36 @@
     color: var(--accent);
   }
 
-  .hero-proof-card {
-    transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
-  }
-
   .hero-proof-card:hover,
   .hero-proof-card:focus-visible {
-    z-index: 5;
-    border-color: var(--accent);
-    box-shadow: 0 34px 90px -38px rgba(29, 27, 24, 0.8);
+    opacity: 0.84;
   }
 
   .project-media:hover {
-    transform: translateY(-4px);
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-    box-shadow: 0 38px 90px -44px rgba(29, 27, 24, 0.68);
-  }
-
-  .project-media:hover::after {
-    opacity: 1;
+    opacity: 0.92;
   }
 }
 
 @theme inline {
   --color-ac: var(--accent);
+  --color-accent: var(--node);
+  --color-accent-foreground: var(--fg);
+  --color-background: var(--bg);
+  --color-border: var(--line);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--fg);
+  --color-destructive: #9f2f27;
+  --color-foreground: var(--fg);
+  --color-input: var(--line);
+  --color-muted: var(--node);
+  --color-muted-foreground: var(--muted);
+  --color-primary: var(--fg);
+  --color-primary-foreground: var(--surface);
+  --color-ring: var(--accent);
+  --color-secondary: var(--node);
+  --color-secondary-foreground: var(--fg);
   --color-bg: var(--bg);
   --color-fg: var(--fg);
-  --color-muted: var(--muted);
   --color-dim: var(--dim);
   --font-display: var(--font-syne);
   --font-sans: var(--font-grotesk);
@@ -208,6 +139,8 @@
     min-width: 320px;
     background: var(--bg);
     color: var(--fg);
+    font-size: 1rem;
+    line-height: 1.625;
     text-rendering: optimizeLegibility;
   }
 
@@ -265,14 +198,14 @@
   }
 
   .cg-cell.cg-play {
-    animation: cg-wave 420ms var(--ease) both;
+    animation: cg-wave 180ms ease-out both;
   }
 }
 
 @keyframes cg-wave {
   from {
-    opacity: 0;
-    transform: scale(0.5);
+    opacity: 0.35;
+    transform: scale(0.9);
   }
 
   to {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Menu, X } from "lucide-react";
 import { profile, sections } from "@/content/resume";
+import { ActionLink } from "@/components/ui/action-link";
 import { GUTTER } from "@/lib/section";
 
 export function Nav() {
@@ -21,19 +22,19 @@ export function Nav() {
           .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0];
         if (current) setActiveSection(current.target.id);
       },
-      { rootMargin: "-22% 0px -68% 0px" }
+      { rootMargin: "-20% 0px -58% 0px" }
     );
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
 
   return (
-    <header className={`${GUTTER} fixed inset-x-0 top-0 z-50`}>
+    <header className={`${GUTTER} fixed inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top)]`}>
       <nav
         aria-label="Primary navigation"
-        className="nav-shell mx-auto mt-3 flex h-14 max-w-[72rem] items-center justify-between gap-5 px-3 sm:px-4"
+        className="nav-shell mx-auto mt-3 flex h-14 max-w-6xl items-center justify-between gap-5 px-3 sm:px-4"
       >
-        <a href="#hero" className="font-display text-lg font-extrabold tracking-[-0.04em]">
+        <a href="#hero" className="font-display text-lg font-bold">
           PP<span className="text-[var(--accent)]">.</span>
           <span className="sr-only">{profile.name} — back to top</span>
         </a>
@@ -52,12 +53,13 @@ export function Nav() {
           ))}
         </ul>
 
-        <a
+        <ActionLink
           href={`mailto:${profile.email}`}
-          className="hidden min-h-11 items-center rounded-full border border-[var(--fg)] px-5 text-sm font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:inline-flex"
+          variant="outline"
+          className="hidden sm:inline-flex"
         >
           Let&apos;s talk
-        </a>
+        </ActionLink>
 
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
@@ -67,10 +69,10 @@ export function Nav() {
             <Menu aria-hidden className="size-5" />
           </Dialog.Trigger>
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 z-[60] bg-[var(--fg)]/25 backdrop-blur-sm data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 transition-opacity" />
-            <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] flex w-[min(88vw,26rem)] flex-col bg-[var(--surface)] p-6 shadow-[-24px_0_80px_rgba(29,27,24,0.18)] outline-none data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full transition-transform">
+            <Dialog.Backdrop className="fixed inset-0 z-40 bg-[var(--fg)]/30 transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+            <Dialog.Popup className="fixed inset-y-0 right-0 z-50 flex w-[min(88vw,26rem)] flex-col bg-[var(--surface)] p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl outline-none transition-transform duration-200 data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full">
               <div className="flex items-center justify-between border-b border-[var(--line)] pb-5">
-                <Dialog.Title className="font-display text-lg font-bold">Navigate</Dialog.Title>
+                <Dialog.Title className="font-display text-lg font-semibold">Navigate</Dialog.Title>
                 <Dialog.Close
                   aria-label="Close navigation"
                   className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--fg)]"
@@ -88,7 +90,7 @@ export function Nav() {
                       className="flex min-h-14 items-center justify-between text-xl font-semibold"
                     >
                       {section.label}
-                      <span className="text-xs tracking-[0.16em] text-[var(--muted)]">
+                      <span className="text-xs text-[var(--muted)]">
                         {section.n}
                       </span>
                     </a>
@@ -96,12 +98,13 @@ export function Nav() {
                 ))}
               </ul>
 
-              <a
+              <ActionLink
                 href={`mailto:${profile.email}`}
-                className="mt-auto inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--fg)] px-6 text-[var(--surface)]"
+                variant="primary"
+                className="mt-auto"
               >
                 Start a conversation
-              </a>
+              </ActionLink>
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>
