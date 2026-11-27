@@ -1,5 +1,4 @@
 import { ArrowUpRight } from "lucide-react";
-import { FooterAntialiasing } from "@/components/gpu/footer-antialiasing";
 import { contact, profile, sectionN, socials } from "@/content/resume";
 import { CopyEmail } from "@/components/ui/copy-email";
 import { SectionLabel } from "@/components/ui/section-label";
@@ -14,7 +13,6 @@ export function Contact() {
       aria-labelledby="contact-title"
       className={`${GUTTER} relative isolate border-t border-[var(--line)] pb-6 pt-[clamp(64px,9vw,112px)]`}
     >
-      <FooterAntialiasing />
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel n={sectionN("contact")}>Contact</SectionLabel>
 

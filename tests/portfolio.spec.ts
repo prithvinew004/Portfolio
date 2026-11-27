@@ -277,6 +277,8 @@ test("mobile navigation returns focus and contact survives clipboard denial", as
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  const footer = page.locator("#contact");
+  await expect(footer.locator("canvas")).toHaveCount(0);
 
   const trigger = page.getByRole("button", { name: "Open navigation" });
   await trigger.click();
