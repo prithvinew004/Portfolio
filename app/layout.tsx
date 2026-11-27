@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Syne, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/nav";
 import { profile, socials } from "@/content/resume";
 
-// Keep the display face variable so all editorial heading weights share one font asset.
-const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
-const grotesk = Space_Grotesk({
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const mono = Geist_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-grotesk",
+  variable: "--font-geist-mono",
+  preload: false,
 });
 
 // Vercel injects VERCEL_PROJECT_PRODUCTION_URL at build time; set NEXT_PUBLIC_SITE_URL once you
@@ -55,12 +54,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${syne.variable} ${grotesk.variable}`}>
+    <html lang="en" className={`${geist.variable} ${mono.variable}`}>
       <body className="font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }}
         />
+        <a className="skip-link" href="#main-content">Skip to content</a>
         <Nav />
         {children}
       </body>

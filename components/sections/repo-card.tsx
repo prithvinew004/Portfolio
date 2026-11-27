@@ -1,14 +1,10 @@
 import { Star } from "lucide-react";
+import { LiquidCard } from "@/components/ui/liquid-card";
 import type { Repo } from "@/lib/github";
 
 export function RepoCard({ repo, color }: { repo: Repo; color: string }) {
   return (
-    <a
-      href={repo.url}
-      target="_blank"
-      rel="noreferrer noopener"
-      className="group flex h-full flex-col rounded-[var(--radius)] border border-[var(--line)] bg-[var(--surface)] p-6 no-underline transition-colors hover:border-[var(--accent)]"
-    >
+    <LiquidCard as="a" href={repo.url} target="_blank" rel="noreferrer noopener">
       <div className="mb-2.5 flex items-baseline gap-3">
         <span className="font-display text-lg font-bold text-[var(--fg)] group-hover:text-[var(--accent)]">
           {repo.name}
@@ -36,6 +32,6 @@ export function RepoCard({ repo, color }: { repo: Repo; color: string }) {
           {repo.language}
         </div>
       )}
-    </a>
+    </LiquidCard>
   );
 }

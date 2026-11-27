@@ -27,7 +27,7 @@ export function CopyEmail({ email }: { email: string }) {
         type="button"
         onClick={copy}
         aria-label="Copy email address"
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-current px-4 text-sm font-medium"
+        className="button button-secondary cursor-pointer"
       >
         {status === "copied" ? (
           <Check aria-hidden className="size-4" />

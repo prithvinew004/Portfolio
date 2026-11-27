@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "github:refresh": "bun scripts/refresh-github-fallback.mjs",
+    "test:unit": "bun test ./tests/unit",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed"
   },
@@ -20,7 +21,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "vgpu": "0.6.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -30,6 +32,8 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vgpu/wgsl": "0.6.0",
+    "@webgpu/types": "0.1.74",
     "eslint": "^9",
     "eslint-config-next": "15.5.22",
     "tailwindcss": "^4.3.3",

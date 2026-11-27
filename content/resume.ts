@@ -1,9 +1,13 @@
+const role = ["Product-focused", "full-stack developer"] as const;
+
 export const profile = {
   name: "Prithviraj Panda",
-  role: "Product-focused full-stack developer",
+  role: role.join(" "),
+  roleLines: role,
   location: "India",
   availability: "",
   email: "prithvi.new004@gmail.com",
+  bookingUrl: "https://cal.com/prithviraj-panda-qtbcvw/30min",
   resumeUrl: "",
   photo: "",
   coords: { lat: 22.6, lon: 79 },
@@ -311,6 +315,7 @@ const order = [
   { id: "projects", label: "Work" },
   { id: "skills", label: "Capabilities" },
   { id: "experience", label: "Approach" },
+  { id: "about", label: "About" },
   { id: "activity", label: "Activity" },
   { id: "contact", label: "Contact" },
 ];

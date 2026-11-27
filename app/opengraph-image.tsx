@@ -5,11 +5,11 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = `${profile.name} — ${profile.role}`;
 
-const BG = "#f2ede3";
-const SURFACE = "#faf7f0";
-const FG = "#1d1b18";
-const ACCENT = "#ad4527";
-const MUTED = "#625e57";
+const BG = "#0b0c0e";
+const SURFACE = "#121417";
+const FG = "#ecedef";
+const ACCENT = "#a5b3ff";
+const MUTED = "#a0a4ad";
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -36,7 +36,7 @@ export default function OpengraphImage() {
             height: 260,
             borderRadius: 999,
             background: SURFACE,
-            border: "2px solid #cfc6b8",
+            border: "2px solid #2c3039",
             display: "flex",
           }}
         />

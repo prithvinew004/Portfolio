@@ -3,6 +3,9 @@ node_modules
 
 # next.js
 .next
+.next-dev
+/liquid-layout/
+/anti-aliasing/
 out
 build
 next-env.d.ts
