@@ -163,23 +163,6 @@
 .hero-art:is([data-renderer="active"], [data-renderer="paused"]) .hero-static { opacity: 0; }
 .hero-art:is([data-renderer="active"], [data-renderer="paused"]) .hero-canvas { opacity: 1; }
 
-.hero-motion-control {
-  position: absolute;
-  right: max(clamp(20px, 5vw, 72px), calc((100% - 1200px) / 2));
-  bottom: 1rem;
-  display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 0.55rem;
-  background: var(--bg);
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.hero-motion-control:hover { border-color: var(--accent); color: var(--fg); }
-
 .hero-art::after {
   content: "";
   background: linear-gradient(to bottom, var(--bg), transparent 22%, transparent 70%, var(--bg)),
@@ -313,9 +296,7 @@
   visibility: hidden;
 }
 
-.footer-aa-controls { visibility: hidden; }
-.footer-aa-stage[data-aa-ready="true"] .footer-aa-canvas,
-.footer-aa-controls[data-aa-ready="true"] { visibility: visible; }
+.footer-aa-stage[data-aa-ready="true"] .footer-aa-canvas { visibility: visible; }
 
 .liquid-card-canvas {
   position: absolute;
@@ -336,7 +317,6 @@
 
 @media (prefers-reduced-motion: reduce), (forced-colors: active) {
   .liquid-card-canvas, .footer-aa-canvas { display: none; }
-  .footer-aa-controls[data-aa-ready="true"] { visibility: hidden; }
 
   .liquid-card-grid[data-liquid-status="active"] .liquid-card {
     border-color: var(--line);

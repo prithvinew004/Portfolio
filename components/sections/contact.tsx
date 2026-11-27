@@ -14,6 +14,7 @@ export function Contact() {
       aria-labelledby="contact-title"
       className={`${GUTTER} relative isolate border-t border-[var(--line)] pb-6 pt-[clamp(64px,9vw,112px)]`}
     >
+      <FooterAntialiasing />
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel n={sectionN("contact")}>Contact</SectionLabel>
 
@@ -65,10 +66,7 @@ export function Contact() {
           </a>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-          <p className="text-xs text-[var(--dim)]">© {new Date().getFullYear()} {profile.name}</p>
-          <FooterAntialiasing />
-        </div>
+        <p className="mt-5 text-xs text-[var(--dim)]">© {new Date().getFullYear()} {profile.name}</p>
       </div>
     </footer>
   );

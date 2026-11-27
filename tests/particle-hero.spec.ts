@@ -14,7 +14,6 @@ test("unsupported WebGPU leaves the hero and its links usable", async ({ page })
   await expect(page.locator(".hero-art")).toHaveAttribute("data-renderer", "static");
   await expect(page.locator(".hero-static")).toHaveCSS("opacity", "1");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Pause hero animation" })).toHaveCount(0);
   await page.getByRole("link", { name: "See selected work" }).click();
   await expect(page.locator("#projects")).toBeInViewport();
 });
@@ -44,7 +43,7 @@ test("reduced motion skips GPU initialization, and an unavailable adapter falls 
   expect(errors).toEqual([]);
 });
 
-test("the real particle renderer pauses and recovers its fallback on device loss", async ({ page }) => {
+test("the hero animates without playback controls and suspends rendering when hidden", async ({ page }) => {
   await page.addInitScript(() => {
     if (!globalThis.GPUAdapter || !globalThis.GPUQueue) return;
     const requestDevice = GPUAdapter.prototype.requestDevice;
@@ -73,29 +72,26 @@ test("the real particle renderer pauses and recovers its fallback on device loss
   const art = page.locator(".hero-art");
   const frames = () => page.locator("html").getAttribute("data-gpu-frames");
   await expect(art).toHaveAttribute("data-renderer", "active", { timeout: 15000 });
-  await expect.poll(frames).not.toBeNull();
-  await page.getByRole("button", { name: "Pause hero animation" }).click();
-  await expect(art).toHaveAttribute("data-renderer", "paused");
-  const pausedAt = await frames();
-  await page.evaluate(() => new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-  }));
-  expect(await frames()).toEqual(pausedAt);
-
-  await page.getByRole("button", { name: "Play hero animation" }).click();
-  await expect(art).toHaveAttribute("data-renderer", "active");
-  await expect.poll(frames).not.toBe(pausedAt);
+  await expect(page.getByRole("button", { name: /^(pause|play) hero animation$/i })).toHaveCount(0);
+  const initial = await frames();
+  await expect.poll(frames).not.toBe(initial);
 
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", { value: true, configurable: true });
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await expect(art).toHaveAttribute("data-renderer", "paused");
+  const hiddenAt = await frames();
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  }));
+  expect(await frames()).toEqual(hiddenAt);
   await page.evaluate(() => {
     Reflect.deleteProperty(document, "hidden");
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await expect(art).toHaveAttribute("data-renderer", "active");
+  await expect.poll(frames).not.toBe(hiddenAt);
   await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
   await expect(art).toHaveAttribute("data-renderer", "paused");
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));

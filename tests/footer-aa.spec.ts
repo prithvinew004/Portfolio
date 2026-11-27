@@ -25,7 +25,7 @@ test("the footer keeps its artwork and contact actions without WebGPU", async ({
   await expect(footer.getByRole("button", { name: "Copy email address" })).toBeVisible();
 });
 
-test("the footer animates on its own, pauses, and draws all four anti-aliasing modes", async ({ page }) => {
+test("the footer animates without controls and suspends or falls back when needed", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
     if (!globalThis.GPUCanvasContext || !globalThis.GPUQueue) return;
@@ -55,45 +55,32 @@ test("the footer animates on its own, pauses, and draws all four anti-aliasing m
   const footer = page.locator("#contact");
   const stage = footer.locator(".footer-aa-stage");
   const canvas = stage.locator("canvas");
-  const picker = footer.getByRole("combobox", { name: "Anti-aliasing" });
   const frameCount = async () => Number(await page.locator("html").getAttribute("data-footer-gpu-frames"));
   await stage.scrollIntoViewIfNeeded();
   await expect(stage).toBeInViewport();
   await expect(canvas).toBeHidden();
   await expect(page.locator("html")).not.toHaveAttribute("data-footer-gpu-configured");
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(canvas).toHaveAttribute("data-aa-mode", "fxaa");
+  await expect(canvas).toBeVisible();
+  await expect(footer.getByRole("combobox")).toHaveCount(0);
+  await expect(footer.getByRole("button", { name: /^(pause|play) footer animation$/i })).toHaveCount(0);
   await expect(stage).toHaveCSS("opacity", "1");
   const backingScale = await canvas.evaluate((element: HTMLCanvasElement) => element.width / element.clientWidth);
   expect(backingScale).toBeCloseTo(2, 1);
   const initial = await frameCount();
   await expect.poll(frameCount).toBeGreaterThan(initial);
-  await footer.getByRole("button", { name: "Pause footer animation" }).click();
-  await page.waitForTimeout(120);
-  const pausedAt = await frameCount();
-  await page.waitForTimeout(160);
-  expect(await frameCount()).toBe(pausedAt);
-
-  await picker.selectOption("off");
-  await expect(canvas).toHaveAttribute("data-aa-mode", "off");
-  const unfiltered = await canvas.screenshot();
-  await picker.selectOption("msaa");
-  await expect(canvas).toHaveAttribute("data-aa-mode", "msaa");
-  await picker.selectOption("ssaa");
-  await expect(canvas).toHaveAttribute("data-aa-mode", "ssaa");
-  expect((await canvas.screenshot()).equals(unfiltered)).toBe(false);
-  await picker.selectOption("fxaa");
-  await expect(canvas).toHaveAttribute("data-aa-mode", "fxaa");
-
-  const beforeResume = await frameCount();
-  await footer.getByRole("button", { name: "Play footer animation" }).click();
-  await expect.poll(frameCount).toBeGreaterThan(beforeResume);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(canvas).toBeHidden();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(canvas).toBeVisible();
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await expect(stage).not.toBeInViewport();
   await page.waitForTimeout(120);
   const offscreenAt = await frameCount();
   await page.waitForTimeout(160);
   expect(await frameCount()).toBe(offscreenAt);
+  await stage.scrollIntoViewIfNeeded();
+  await expect.poll(frameCount).toBeGreaterThan(offscreenAt);
 
   await page.evaluate(() => window.dispatchEvent(new Event("portfolio-test-aa-loss")));
   await expect(canvas).toBeHidden();

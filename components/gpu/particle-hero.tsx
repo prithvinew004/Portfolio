@@ -1,6 +1,5 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { ParticleRenderer } from "./particle-renderer";
 
@@ -8,9 +7,7 @@ type Mode = "static" | "active" | "paused";
 
 export function ParticleHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const toggleRef = useRef<() => void>(null);
   const [mode, setMode] = useState<Mode>("static");
-  const [userPaused, setUserPaused] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -26,7 +23,6 @@ export function ParticleHero() {
     let loading = false;
     let firstFrame = false;
     let failed = false;
-    let paused = false;
 
     function fail() {
       if (controller.signal.aborted) return;
@@ -39,9 +35,9 @@ export function ParticleHero() {
       if (failed || controller.signal.aborted) return;
       const eligible = visible && !document.hidden && !motion.matches;
       if (renderer) {
-        if (eligible && !paused) renderer.start();
+        if (eligible) renderer.start();
         else renderer.stop();
-        if (firstFrame) setMode(motion.matches ? "static" : eligible && !paused ? "active" : "paused");
+        if (firstFrame) setMode(motion.matches ? "static" : eligible ? "active" : "paused");
       } else if (eligible && !loading) {
         loading = true;
         void import("./particle-renderer")
@@ -73,7 +69,7 @@ export function ParticleHero() {
     observer.observe(section);
 
     function trackPointer(event: PointerEvent) {
-      if (!renderer || !visible || paused || motion.matches || event.pointerType !== "mouse") return;
+      if (!renderer || !visible || motion.matches || event.pointerType !== "mouse") return;
       const bounds = target.getBoundingClientRect();
       if (bounds.width && bounds.height) {
         renderer.setPointer([(event.clientX - bounds.left) / bounds.width, (event.clientY - bounds.top) / bounds.height]);
@@ -82,12 +78,6 @@ export function ParticleHero() {
     function clearPointer() {
       renderer?.setPointer(null);
     }
-
-    toggleRef.current = () => {
-      paused = !paused;
-      setUserPaused(paused);
-      sync();
-    };
 
     motion.addEventListener("change", sync);
     document.addEventListener("visibilitychange", sync);
@@ -98,7 +88,6 @@ export function ParticleHero() {
 
     return () => {
       controller.abort();
-      toggleRef.current = null;
       observer.disconnect();
       motion.removeEventListener("change", sync);
       document.removeEventListener("visibilitychange", sync);
@@ -109,21 +98,9 @@ export function ParticleHero() {
   }, []);
 
   return (
-    <>
-      <div className="hero-art" aria-hidden="true" data-renderer={mode}>
-        <div className="hero-static" />
-        <canvas ref={canvasRef} className="hero-canvas" />
-      </div>
-      {mode !== "static" && (
-        <button
-          type="button"
-          className="hero-motion-control"
-          onClick={() => toggleRef.current?.()}
-          aria-label={userPaused ? "Play hero animation" : "Pause hero animation"}
-        >
-          {userPaused ? <Play aria-hidden size={15} /> : <Pause aria-hidden size={15} />}
-        </button>
-      )}
-    </>
+    <div className="hero-art" aria-hidden="true" data-renderer={mode}>
+      <div className="hero-static" />
+      <canvas ref={canvasRef} className="hero-canvas" />
+    </div>
   );
 }
