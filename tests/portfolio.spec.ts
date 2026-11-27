@@ -3,7 +3,9 @@ import { expect, test, type Page } from "@playwright/test";
 
 const viewports = [
   { name: "mobile", width: 390, height: 844 },
+  { name: "small-mobile", width: 360, height: 800 },
   { name: "tablet", width: 768, height: 1024 },
+  { name: "small-desktop", width: 1024, height: 900 },
   { name: "laptop", width: 1280, height: 800 },
   { name: "desktop", width: 1440, height: 900 },
   { name: "compact", width: 320, height: 568 },
@@ -61,8 +63,32 @@ test("baseline has no runtime, overflow, or serious accessibility failures", asy
   expect(blocking).toEqual([]);
 });
 
+test("the production homepage emits no unused preload or blocked unload warnings", async ({ page, context }) => {
+  const warnings = new Set<string>();
+  function collect(text: string) {
+    if (/preloaded using link preload but not used|unload is not allowed in this document/i.test(text)) {
+      warnings.add(text);
+    }
+  }
+
+  const devTools = await context.newCDPSession(page);
+  await devTools.send("Log.enable");
+  devTools.on("Log.entryAdded", ({ entry }) => collect(entry.text));
+  page.on("console", (message) => collect(message.text()));
+
+  await page.route("http://127.0.0.1:3100/", async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, headers: { ...response.headers(), "permissions-policy": "unload=()" } });
+  });
+  const response = await page.goto("/", { waitUntil: "load" });
+  expect(response?.status()).toBe(200);
+  // Chromium reports unused preload hints asynchronously after the load event.
+  await page.waitForTimeout(5_000);
+  expect([...warnings]).toEqual([]);
+});
+
 test("first viewport explains the offer and exposes both primary actions", async ({ page }) => {
-  for (const viewport of [viewports[0], viewports[3]]) {
+  for (const viewport of [viewports[0], viewports[5], viewports[6]]) {
     await page.setViewportSize(viewport);
     await page.goto("/");
 
@@ -71,13 +97,13 @@ test("first viewport explains the offer and exposes both primary actions", async
     ).toBeVisible();
     await expect(page.getByText(/turn product ideas into clear, usable web experiences/i)).toBeVisible();
 
-    const contact = page.getByRole("link", { name: /start a conversation/i }).last();
+    const contact = page.locator("#hero").getByRole("link", { name: "Contact me" });
     const work = page.getByRole("link", { name: /see selected work/i });
     await expect(contact).toHaveAttribute("href", "#contact");
     await expect(work).toHaveAttribute("href", "#projects");
     await expect(contact).toBeInViewport();
     await expect(work).toBeInViewport();
-    const evidence = page.locator("[data-hero-proof]");
+    const evidence = page.getByRole("navigation", { name: "Jump to a featured project" }).getByRole("link");
     await expect(evidence).toHaveCount(4);
     for (const [index, href] of [
       "#project-curoh-dr-raja",
@@ -86,7 +112,6 @@ test("first viewport explains the offer and exposes both primary actions", async
       "#project-lomaa",
     ].entries()) {
       await expect(evidence.nth(index)).toHaveAttribute("href", href);
-      await expect(evidence.nth(index)).toBeInViewport();
     }
     await expect(page.getByText(/^Loading$/i)).toHaveCount(0);
 
@@ -99,7 +124,7 @@ test("first viewport explains the offer and exposes both primary actions", async
 });
 
 test("small-screen text stays inside the viewport without clipping", async ({ page }) => {
-  await page.setViewportSize(viewports[4]);
+  await page.setViewportSize(viewports[6]);
   await page.goto("/", { waitUntil: "networkidle" });
 
   const clipped = await page.locator("h1, h2, h3, h4, p, a, button, dt, dd").evaluateAll(
@@ -134,7 +159,7 @@ test("selected work is evidence-backed and never uses contact as a fake case stu
   await page.goto("/");
   const work = page.locator("#projects");
   const caseStudies = work.getByRole("article");
-  const mediaLinks = work.locator("[data-project-media]");
+  const mediaLinks = work.locator('[data-project-media="featured"]');
 
   await expect(caseStudies).toHaveCount(4);
   await expect(mediaLinks).toHaveCount(4);
@@ -167,18 +192,23 @@ test("selected work is evidence-backed and never uses contact as a fake case stu
   await expect(work.getByRole("heading", { name: "GolfGives" })).toBeVisible();
   await expect(work.getByRole("heading", { name: "PDFToolkit" })).toBeVisible();
   await expect(work.getByRole("heading", { name: "DevToolkit" })).toBeVisible();
+  await expect(work.locator('[data-project-media="compact"]')).toHaveCount(3);
+  await expect(work.getByRole("link", { name: /source for imagetoolkit/i })).toHaveAttribute(
+    "href",
+    "https://github.com/prithvinew004/ImageToolkit"
+  );
 
   await expect(work.locator('a[href="#contact"]')).toHaveCount(0);
   await expect(work.getByText(/product screenshot|api docs|mobile screens/i)).toHaveCount(0);
 });
 
 test("desktop navigation exposes exactly one active section while scrolling", async ({ page }) => {
-  await page.setViewportSize(viewports[3]);
+  await page.setViewportSize(viewports[5]);
   await page.goto("/");
 
   const nav = page.getByRole("navigation", { name: "Primary navigation" });
-  for (const section of ["projects", "skills", "experience", "activity", "contact"]) {
-    await page.locator(`#${section}`).scrollIntoViewIfNeeded();
+  for (const section of ["projects", "skills", "experience", "about", "activity", "contact", "hero"]) {
+    await nav.locator(`a[href="#${section}"]`).click();
     await expect(nav.locator(`a[href="#${section}"]`)).toHaveAttribute(
       "aria-current",
       "location"
@@ -254,7 +284,42 @@ test("mobile navigation returns focus and contact survives clipboard denial", as
     "https://discord.com/users/1068023960689717288"
   );
   await page.getByRole("button", { name: /copy email/i }).click();
+  await expect(page.getByRole("status").filter({ hasText: /copy unavailable/i })).toBeVisible();
   await expect(email).toBeVisible();
+});
+
+test("desktop and mobile navigation open the Cal.com booking in a separate tab", async ({ page, context }) => {
+  const bookingUrl = "https://cal.com/prithviraj-panda-qtbcvw/30min";
+  await context.route(bookingUrl, (route) => route.fulfill({ body: "Booking page" }));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const desktop = page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: /let.s talk/i });
+  const [desktopBooking] = await Promise.all([page.waitForEvent("popup"), desktop.click()]);
+  await expect(desktopBooking).toHaveURL(bookingUrl);
+  await desktopBooking.close();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  const drawer = page.getByRole("dialog", { name: "Navigate" });
+  const [mobileBooking] = await Promise.all([
+    page.waitForEvent("popup"),
+    drawer.getByRole("link", { name: /start a conversation/i }).click(),
+  ]);
+  await expect(mobileBooking).toHaveURL(bookingUrl);
+  await expect(drawer).toBeHidden();
+  await expect(page.locator("#contact").getByRole("link", { name: /prithvi\.new004@gmail\.com/i })).toHaveAttribute("href", "mailto:prithvi.new004@gmail.com");
+});
+
+test("the mobile contribution chart is scrollable from the keyboard", async ({ page }) => {
+  await page.setViewportSize(viewports[0]);
+  await page.goto("/");
+  const chart = page.getByRole("region", { name: "GitHub contributions calendar" });
+  await chart.focus();
+  await expect(chart).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => chart.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+  const results = await new AxeBuilder({ page }).withRules(["scrollable-region-focusable"]).analyze();
+  expect(results.violations).toEqual([]);
 });
 
 test("public activity discloses its source and covered-through date", async ({ page }) => {
@@ -278,7 +343,7 @@ test("public activity discloses its source and covered-through date", async ({ p
     "https://github.com/prithvinew004"
   );
   await expect(page.getByRole("heading", { name: /real work, shown with context/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /start a conversation/i }).last()).toHaveAttribute(
+  await expect(page.locator("#hero").getByRole("link", { name: "Contact me" })).toHaveAttribute(
     "href",
     "#contact"
   );

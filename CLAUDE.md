@@ -3,7 +3,7 @@
 - Prefer semantic server components; use client components only for direct interaction
 - All animations must respect prefers-reduced-motion
 - Mobile-first responsive with no horizontal document overflow
-- Warm ivory/ink/oxide visual system; no theme toggle
+- Graphite/blue visual system; no theme toggle
 - Target Lighthouse performance 90+
 - Use next/font and next/image for stable media and typography
 - Content source of truth: content/resume.ts (never hardcode personal details in components)

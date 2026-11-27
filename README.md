@@ -1,6 +1,6 @@
 # Prithviraj Panda — Portfolio
 
-Personal portfolio: a warm, editorial single-page site centered on public work, evidence-linked capabilities, and direct contact.
+Personal portfolio with a graphite theme, public project evidence, and direct contact.
 
 Built with Next.js 15 (App Router), TypeScript, Tailwind CSS v4, Base UI, and Bun.
 
@@ -16,6 +16,7 @@ bun run dev      # http://localhost:3000
 | `bun run build` | Production build |
 | `bun run start` | Serve the production build |
 | `bun run lint` | ESLint |
+| `bun run test:unit` | Bun unit tests |
 | `bun run test:e2e` | Playwright browser suite |
 | `bun run github:refresh` | Regenerate the GitHub fallback snapshot (see below) |
 
@@ -24,7 +25,8 @@ bun run dev      # http://localhost:3000
 ```
 app/            Layout, page, global styles, favicon and Open Graph image
 components/
-  sections/     Hero, Projects, Skills, Experience, GitHub activity and Contact
+  sections/     Hero, Projects, Skills, Experience, About, GitHub activity and Contact
+  gpu/          Lazy vgpu particle renderer and WGSL shaders
   ui/           Section label and copy-email interaction
 content/        resume.ts (all copy) and github-fallback.json
 lib/            Section rhythm constants, GitHub fetcher, cn()
@@ -61,7 +63,8 @@ Zero config on Vercel: import the repo at [vercel.com/new](https://vercel.com/ne
 
 ## Design notes
 
-- Warm ivory, ink, and oxide tokens keep the interface readable without a theme toggle.
-- Motion is limited to a restrained contribution-graph entrance and is disabled by `prefers-reduced-motion`.
+- Graphite and muted blue tokens live in `app/globals.css`, with Geist for type.
+- The hero starts with `public/galaxy.svg`. A single vgpu renderer takes over after its first successful GPU frame. It pauses outside the viewport and in hidden tabs. Reduced motion uses the static artwork.
+- The compute-to-draw pipeline follows the public [vgpu Spiral Galaxy example](https://vgpu.sh/examples/spiral-galaxy), with a smaller star field and one transparent draw pass.
 - Project claims and screenshots are limited to public, verifiable evidence.
 - Section spacing (gutter, vertical padding, content measure) comes from `lib/section.ts`.

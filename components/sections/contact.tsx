@@ -11,25 +11,20 @@ export function Contact() {
     <footer
       id="contact"
       aria-labelledby="contact-title"
-      className={`${GUTTER} bg-[var(--fg)] pb-8 pt-[clamp(6rem,14vh,11rem)] text-[var(--surface)]`}
+      className={`${GUTTER} border-t border-[var(--line)] pb-6 pt-[clamp(64px,9vw,112px)]`}
     >
       <div className={`${CONTENT} mx-auto`}>
-        <SectionLabel
-          n={sectionN("contact")}
-          className="text-[var(--bg)]/65 [&>span]:text-[var(--surface)]"
-        >
-          Contact
-        </SectionLabel>
+        <SectionLabel n={sectionN("contact")}>Contact</SectionLabel>
 
-        <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="section-reveal mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="min-w-0">
             <h2
               id="contact-title"
-              className="max-w-[11ch] font-display text-[clamp(2.5rem,8vw,8.5rem)] font-extrabold leading-[0.88] tracking-[-0.055em]"
+              className="section-title max-w-[17ch]"
             >
               {contact.heading[0]} {contact.heading[1]}
             </h2>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--bg)]/70">
+            <p className="mt-4 max-w-md text-pretty text-base leading-relaxed text-[var(--muted)]">
               Share the workflow, product, or problem you are trying to move forward. A concise
               email is enough to start.
             </p>
@@ -38,17 +33,17 @@ export function Contact() {
           <div className="min-w-0 lg:pb-2">
             <a
               href={`mailto:${profile.email}`}
-              className="inline-flex min-h-12 max-w-full items-center gap-3 break-all text-lg font-semibold text-[var(--surface)] underline decoration-[var(--accent)] decoration-2 underline-offset-8 sm:text-xl"
+              className="text-link inline-flex min-h-11 max-w-full items-center gap-2 break-all text-base font-medium text-[var(--accent)] underline underline-offset-4 sm:text-lg"
             >
-              {profile.email} <ArrowUpRight aria-hidden className="size-5" />
+              {profile.email} <ArrowUpRight aria-hidden className="size-4 shrink-0" />
             </a>
-            <div className="mt-5">
+            <div className="mt-2">
               <CopyEmail email={profile.email} />
             </div>
           </div>
         </div>
 
-        <div className="mt-24 flex flex-col gap-7 border-t border-[var(--surface)]/20 pt-7 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-x-6 border-t border-[var(--line)] pt-3">
           <ul className="flex flex-wrap gap-5">
             {externalSocials.map((social) => (
               <li key={social.label}>
@@ -56,7 +51,7 @@ export function Contact() {
                   href={social.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="inline-flex min-h-11 items-center gap-2 text-[var(--bg)]/75 hover:text-[var(--surface)]"
+                  className="text-link inline-flex min-h-11 items-center gap-1.5 text-sm text-[var(--muted)]"
                 >
                   {social.label} <ArrowUpRight aria-hidden className="size-4" />
                   <span className="sr-only">(opens in a new tab)</span>
@@ -64,15 +59,12 @@ export function Contact() {
               </li>
             ))}
           </ul>
-          <a href="#hero" className="inline-flex min-h-11 items-center text-[var(--bg)]/75">
+          <a href="#hero" className="text-link inline-flex min-h-11 items-center text-sm text-[var(--muted)]">
             Back to top ↑
           </a>
         </div>
 
-        <div className="mt-8 flex flex-col gap-2 text-sm text-[var(--bg)]/55 sm:flex-row sm:justify-between">
-          <span>© {new Date().getFullYear()} {profile.name}</span>
-          <span>{contact.footerNote}</span>
-        </div>
+        <p className="mt-5 text-xs text-[var(--dim)]">© {new Date().getFullYear()} {profile.name}</p>
       </div>
     </footer>
   );

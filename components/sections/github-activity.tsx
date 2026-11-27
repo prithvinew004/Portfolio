@@ -16,20 +16,19 @@ export async function GitHubActivity() {
   const coveredThrough = [contributions.coveredThrough, repoFeed.coveredThrough].sort()[0];
 
   return (
-    <section id="activity" className={`relative overflow-x-hidden ${GUTTER} ${SECTION_Y}`}>
+    <section id="activity" aria-labelledby="activity-title" className={`${GUTTER} ${SECTION_Y} border-t border-[var(--line)] bg-[var(--surface)]`}>
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel n={sectionN("activity")}>Public activity</SectionLabel>
 
-        <div className="mt-7 grid gap-8 border-b border-[var(--line)] pb-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(20rem,1fr)] lg:items-end">
-          <h2 className="max-w-[11ch] font-display text-[clamp(2.5rem,6vw,6.5rem)] font-extrabold leading-[0.9] tracking-[-0.05em]">
+        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)] lg:items-end">
+          <h2 id="activity-title" className="section-title max-w-[18ch]">
             Public activity, in context.
           </h2>
           <div>
-            <p className="max-w-[42rem] text-lg leading-8 text-[var(--muted)]">
-              Development focus: {profile.currentlyBuilding} Repository data is supporting evidence,
-              not a substitute for the work above.
+            <p className="max-w-md text-pretty text-sm leading-relaxed text-[var(--muted)]">
+              Development focus: {profile.currentlyBuilding}
             </p>
-            <p className="mt-4 text-sm font-medium">
+            <p className="mt-3 font-mono text-xs text-[var(--dim)]">
               {stale ? "Saved public snapshot" : "Live GitHub data"} · covered through{" "}
               <time dateTime={coveredThrough}>
                 {new Intl.DateTimeFormat("en", {
@@ -43,11 +42,11 @@ export async function GitHubActivity() {
           </div>
         </div>
 
-        <div className="mt-10 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--surface)] p-5 sm:p-8">
+        <div className="mt-8 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--bg)] p-4 sm:p-6">
           <ContributionWave days={contributions.days} total={contributions.total} />
         </div>
 
-        <div className="mt-[18px] grid grid-cols-1 gap-[18px] md:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           {repoFeed.repos.map((repo) => (
             <RepoCard key={repo.name} repo={repo} color={langColor(repo.language)} />
           ))}

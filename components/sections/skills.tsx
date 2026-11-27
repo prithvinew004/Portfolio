@@ -16,40 +16,36 @@ export function Skills() {
     >
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel n={sectionN("skills")}>Capabilities</SectionLabel>
-        <div className="mt-7 grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(20rem,1fr)] lg:items-end">
+        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)] lg:items-end">
           <h2
             id="capabilities-title"
-            className="min-w-0 max-w-[10ch] text-balance font-display text-[clamp(1.875rem,6vw,6.5rem)] font-extrabold leading-[0.9] tracking-[-0.05em]"
+            className="section-title max-w-[19ch]"
           >
             Capabilities tied to real work.
           </h2>
-          <p className="max-w-[38rem] text-lg leading-8 text-[var(--muted)]">
-            Tools matter when they help a product move. Each capability below points back to a
-            public implementation you can inspect.
+          <p className="max-w-md text-pretty text-base leading-relaxed text-[var(--muted)]">
+            From responsive interfaces to application data and browser-based tools.
           </p>
         </div>
 
-        <div className="mt-14 grid border-t border-[var(--line)] lg:grid-cols-3">
-          {capabilities.map((capability, index) => (
+        <div className="mt-9 grid gap-px overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--line)] lg:grid-cols-3">
+          {capabilities.map((capability) => (
             <article
               key={capability.title}
-              className="border-b border-[var(--line)] py-8 lg:border-b-0 lg:border-r lg:px-8 lg:py-10 first:lg:pl-0 last:lg:border-r-0 last:lg:pr-0"
+              className="min-w-0 bg-[var(--surface)] p-5 sm:p-7"
             >
-              <span className="text-xs font-semibold tracking-[0.18em] text-[var(--accent)]">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-5 text-2xl font-bold">{capability.title}</h3>
-              <p className="mt-3 min-h-24 leading-7 text-[var(--muted)]">{capability.description}</p>
+              <h3 className="text-xl font-semibold">{capability.title}</h3>
+              <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--muted)] lg:min-h-16">{capability.description}</p>
 
-              <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              <ul className="mt-4 flex flex-wrap gap-2 text-xs">
                 {capability.skills.map((skill) => (
-                  <li key={skill}>{skill}</li>
+                  <li key={skill} className="rounded-md border border-[var(--line)] px-2.5 py-1">{skill}</li>
                 ))}
               </ul>
 
-              <div className="mt-8 border-t border-[var(--line)] pt-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">Evidence</p>
-                <ul className="mt-3 space-y-2">
+              <div className="mt-6 border-t border-[var(--line)] pt-4">
+                <p className="font-mono text-xs text-[var(--dim)]">See it in practice</p>
+                <ul className="mt-1">
                   {capability.evidenceProjectIds.map((projectId) => {
                     const project = projectById.get(projectId);
                     if (!project) return null;
@@ -57,7 +53,7 @@ export function Skills() {
                       <li key={projectId}>
                         <a
                           href={`#project-${projectId}`}
-                          className="inline-flex min-h-10 items-center gap-2 font-semibold underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
+                          className="text-link inline-flex min-h-11 items-center gap-2 text-sm font-medium"
                         >
                           {project.title} <ArrowDownRight aria-hidden className="size-4" />
                         </a>

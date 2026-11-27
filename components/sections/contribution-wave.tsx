@@ -31,7 +31,7 @@ export function ContributionWave({ days, total }: { days: Activity[]; total: num
         // horizontally inside itself instead.
         className="cg !w-full text-[var(--dim)]"
       >
-        <ContributionGraphCalendar className="cg-cal">
+        <ContributionGraphCalendar className="cg-cal" role="region" aria-label="GitHub contributions calendar" tabIndex={0}>
           {({ activity, dayIndex, weekIndex }) => (
             <ContributionGraphBlock
               activity={activity}
