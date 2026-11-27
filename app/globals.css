@@ -280,6 +280,70 @@
 
 .cg-cal svg { width: 100%; min-width: 620px; height: auto; }
 
+.liquid-card-grid { position: relative; isolation: isolate; }
+
+.footer-aa-stage {
+  position: absolute;
+  inset: auto 0 1rem auto;
+  z-index: -1;
+  width: min(76%, 26rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  background: #000 url("/footer-aa-spokes.svg") center / contain no-repeat;
+  mask-image: radial-gradient(circle closest-side, #000 91%, transparent 100%);
+}
+
+@media (min-width: 1024px) {
+  .footer-aa-stage {
+    inset: 0 12% 0 auto;
+    width: min(68%, 58rem);
+    aspect-ratio: auto;
+  }
+}
+
+#contact :is(h2, p, a) {
+  text-shadow: 0 0 3px var(--bg), 0 0 8px var(--bg);
+}
+.footer-aa-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.footer-aa-controls { visibility: hidden; }
+.footer-aa-stage[data-aa-ready="true"] .footer-aa-canvas,
+.footer-aa-controls[data-aa-ready="true"] { visibility: visible; }
+
+.liquid-card-canvas {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  z-index: -1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.liquid-card-grid[data-liquid-status="active"] .liquid-card-canvas { visibility: visible; }
+
+.liquid-card-grid[data-liquid-status="active"] .liquid-card {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .liquid-card-canvas, .footer-aa-canvas { display: none; }
+  .footer-aa-controls[data-aa-ready="true"] { visibility: hidden; }
+
+  .liquid-card-grid[data-liquid-status="active"] .liquid-card {
+    border-color: var(--line);
+    background-color: var(--bg);
+  }
+}
+
 .cg rect[data-level="0"] { fill: color-mix(in srgb, var(--fg) 8%, transparent); }
 .cg rect[data-level="1"] { fill: color-mix(in srgb, var(--accent) 24%, var(--surface)); }
 .cg rect[data-level="2"] { fill: color-mix(in srgb, var(--accent) 46%, var(--surface)); }

@@ -5,6 +5,7 @@ import { Projects } from "@/components/sections/projects";
 import { GitHubActivity } from "@/components/sections/github-activity";
 import { Contact } from "@/components/sections/contact";
 import { About } from "@/components/sections/about";
+import { LiquidCardEffects } from "@/components/gpu/liquid-card-effects";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <Experience />
         <About />
         <GitHubActivity />
+        <LiquidCardEffects />
       </main>
       <Contact />
     </>

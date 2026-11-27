@@ -28,11 +28,13 @@ export function Skills() {
           </p>
         </div>
 
-        <div className="mt-9 grid gap-px overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--line)] lg:grid-cols-3">
+        <div data-liquid-grid className="liquid-card-grid mt-9 grid gap-3 lg:grid-cols-3">
+          <canvas aria-hidden="true" className="liquid-card-canvas" />
           {capabilities.map((capability) => (
             <article
               key={capability.title}
-              className="min-w-0 bg-[var(--surface)] p-5 sm:p-7"
+              data-liquid-card
+              className="liquid-card min-w-0 rounded-xl border border-[var(--line)] bg-[var(--bg)] p-5 sm:p-7"
             >
               <h3 className="text-xl font-semibold">{capability.title}</h3>
               <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--muted)] lg:min-h-16">{capability.description}</p>

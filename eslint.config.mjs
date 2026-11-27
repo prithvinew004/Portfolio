@@ -13,6 +13,8 @@ const config = [
     ignores: [
       ".next/**",
       ".next-dev/**",
+      "liquid-layout/**",
+      "anti-aliasing/**",
       "node_modules/**",
       "next-env.d.ts",
       "playwright-report/**",

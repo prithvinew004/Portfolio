@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { independentProjects, projects, publicProjectCount, sectionN, supportingProjects } from "@/content/resume";
+import { LiquidCard } from "@/components/ui/liquid-card";
 import { ProjectMedia } from "@/components/ui/project-media";
 import { SectionLabel } from "@/components/ui/section-label";
 import { CONTENT, GUTTER, SECTION_Y } from "@/lib/section";
@@ -103,44 +104,43 @@ export function Projects() {
             </div>
           </div>
 
-          <ul className="grid gap-4 lg:grid-cols-3">
-            {independentProjects.map((project) => (
-              <li
-                key={project.id}
-                id={`project-${project.id}`}
-                className="min-w-0 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 sm:p-5"
-              >
-                <ProjectMedia src={project.image.src} alt={project.image.alt} title={project.title} liveUrl={project.liveUrl} compact />
-                <p className="mt-5 font-mono text-xs text-[var(--dim)]">
-                  {project.statusLabel}
-                </p>
-                <h4 className="mt-2 text-xl font-semibold">{project.title}</h4>
-                <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--muted)]">{project.summary}</p>
-                <p className="mt-3 text-pretty text-sm leading-relaxed text-[var(--muted)]">{project.contribution}</p>
-                <p className="mt-3 text-xs leading-relaxed text-[var(--dim)]">{project.capabilities.join(" · ")}</p>
-                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium">
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="inline-flex min-h-10 items-center gap-1 underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
-                  >
-                    Live <ArrowUpRight aria-hidden className="size-4" />
-                    <span className="sr-only">: {project.title} (opens in a new tab)</span>
-                  </a>
-                  <a
-                    href={project.repoUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="inline-flex min-h-10 items-center gap-1 underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
-                  >
-                    Source <ArrowUpRight aria-hidden className="size-4" />
-                    <span className="sr-only">: {project.title} (opens in a new tab)</span>
-                  </a>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div data-liquid-grid className="liquid-card-grid">
+            <canvas aria-hidden="true" className="liquid-card-canvas" />
+            <ul className="grid gap-3 lg:grid-cols-3">
+              {independentProjects.map((project) => (
+                <LiquidCard key={project.id} as="li" id={`project-${project.id}`}>
+                  <ProjectMedia src={project.image.src} alt={project.image.alt} title={project.title} liveUrl={project.liveUrl} compact />
+                  <p className="mt-5 font-mono text-xs text-[var(--dim)]">
+                    {project.statusLabel}
+                  </p>
+                  <h4 className="mt-2 font-display text-lg font-bold">{project.title}</h4>
+                  <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--muted)]">{project.summary}</p>
+                  <p className="mt-3 flex-1 text-pretty text-sm leading-relaxed text-[var(--muted)]">{project.contribution}</p>
+                  <p className="mt-3 text-xs leading-relaxed text-[var(--dim)]">{project.capabilities.join(" · ")}</p>
+                  <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium">
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="inline-flex min-h-10 items-center gap-1 underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
+                    >
+                      Live <ArrowUpRight aria-hidden className="size-4" />
+                      <span className="sr-only">: {project.title} (opens in a new tab)</span>
+                    </a>
+                    <a
+                      href={project.repoUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="inline-flex min-h-10 items-center gap-1 underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--accent)]"
+                    >
+                      Source <ArrowUpRight aria-hidden className="size-4" />
+                      <span className="sr-only">: {project.title} (opens in a new tab)</span>
+                    </a>
+                  </div>
+                </LiquidCard>
+              ))}
+            </ul>
+          </div>
         </section>
 
         <aside className="mt-4 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-5">

@@ -42,14 +42,19 @@ export async function GitHubActivity() {
           </div>
         </div>
 
-        <div className="mt-8 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--bg)] p-4 sm:p-6">
-          <ContributionWave days={contributions.days} total={contributions.total} />
-        </div>
+        <div data-liquid-grid className="liquid-card-grid mt-8 grid grid-cols-1 gap-3">
+          <canvas aria-hidden="true" className="liquid-card-canvas" />
+          <div data-liquid-card className="liquid-card min-w-0 rounded-xl border border-[var(--line)] bg-[var(--bg)] p-4 sm:p-6">
+            <ContributionWave days={contributions.days} total={contributions.total} />
+          </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {repoFeed.repos.map((repo) => (
-            <RepoCard key={repo.name} repo={repo} color={langColor(repo.language)} />
-          ))}
+          {repoFeed.repos.length > 0 && (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {repoFeed.repos.map((repo) => (
+                <RepoCard key={repo.name} repo={repo} color={langColor(repo.language)} />
+              ))}
+            </div>
+          )}
         </div>
 
         <a

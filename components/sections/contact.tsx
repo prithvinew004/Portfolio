@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { FooterAntialiasing } from "@/components/gpu/footer-antialiasing";
 import { contact, profile, sectionN, socials } from "@/content/resume";
 import { CopyEmail } from "@/components/ui/copy-email";
 import { SectionLabel } from "@/components/ui/section-label";
@@ -11,7 +12,7 @@ export function Contact() {
     <footer
       id="contact"
       aria-labelledby="contact-title"
-      className={`${GUTTER} border-t border-[var(--line)] pb-6 pt-[clamp(64px,9vw,112px)]`}
+      className={`${GUTTER} relative isolate border-t border-[var(--line)] pb-6 pt-[clamp(64px,9vw,112px)]`}
     >
       <div className={`${CONTENT} mx-auto`}>
         <SectionLabel n={sectionN("contact")}>Contact</SectionLabel>
@@ -64,7 +65,10 @@ export function Contact() {
           </a>
         </div>
 
-        <p className="mt-5 text-xs text-[var(--dim)]">© {new Date().getFullYear()} {profile.name}</p>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+          <p className="text-xs text-[var(--dim)]">© {new Date().getFullYear()} {profile.name}</p>
+          <FooterAntialiasing />
+        </div>
       </div>
     </footer>
   );
