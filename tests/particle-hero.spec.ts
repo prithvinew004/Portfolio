@@ -39,7 +39,7 @@ test("reduced motion skips GPU initialization, and an unavailable adapter falls 
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator("html")).toHaveAttribute("data-gpu-requested", "true");
   await expect(page.locator(".hero-art")).toHaveAttribute("data-renderer", "static");
-  await expect(page.getByRole("link", { name: "Contact me" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^contact me/i })).toBeVisible();
   expect(errors).toEqual([]);
 });
 

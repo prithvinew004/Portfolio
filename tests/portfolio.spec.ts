@@ -97,9 +97,8 @@ test("first viewport explains the offer and exposes both primary actions", async
     ).toBeVisible();
     await expect(page.getByText(/turn product ideas into clear, usable web experiences/i)).toBeVisible();
 
-    const contact = page.locator("#hero").getByRole("link", { name: "Contact me" });
+    const contact = page.locator("#hero").getByRole("link", { name: /^contact me/i });
     const work = page.getByRole("link", { name: /see selected work/i });
-    await expect(contact).toHaveAttribute("href", "#contact");
     await expect(work).toHaveAttribute("href", "#projects");
     await expect(contact).toBeInViewport();
     await expect(work).toBeInViewport();
@@ -118,8 +117,8 @@ test("first viewport explains the offer and exposes both primary actions", async
     await page.keyboard.press("Tab");
     await expect(page.locator(":focus-visible")).toBeVisible();
 
-    await contact.click();
-    await expect(page.locator("#contact")).toBeInViewport();
+    await work.click();
+    await expect(page.locator("#projects")).toBeInViewport();
   }
 });
 
@@ -288,7 +287,7 @@ test("mobile navigation returns focus and contact survives clipboard denial", as
   await expect(email).toBeVisible();
 });
 
-test("desktop and mobile navigation open the Cal.com booking in a separate tab", async ({ page, context }) => {
+test("the hero and desktop and mobile navigation open the Cal.com booking in a separate tab", async ({ page, context }) => {
   const bookingUrl = "https://cal.com/prithviraj-panda-qtbcvw/30min";
   await context.route(bookingUrl, (route) => route.fulfill({ body: "Booking page" }));
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -298,7 +297,14 @@ test("desktop and mobile navigation open the Cal.com booking in a separate tab",
   await expect(desktopBooking).toHaveURL(bookingUrl);
   await desktopBooking.close();
 
-  await page.setViewportSize({ width: 390, height: 844 });
+  const heroContact = page.locator("#hero").getByRole("link", { name: "Contact me (opens in a new tab)" });
+  for (const viewport of [viewports[5], viewports[0]]) {
+    await page.setViewportSize(viewport);
+    const [heroBooking] = await Promise.all([page.waitForEvent("popup"), heroContact.click()]);
+    await expect(heroBooking).toHaveURL(bookingUrl);
+    await heroBooking.close();
+  }
+
   await page.getByRole("button", { name: "Open navigation" }).click();
   const drawer = page.getByRole("dialog", { name: "Navigate" });
   const [mobileBooking] = await Promise.all([
@@ -343,10 +349,6 @@ test("public activity discloses its source and covered-through date", async ({ p
     "https://github.com/prithvinew004"
   );
   await expect(page.getByRole("heading", { name: /real work, shown with context/i })).toBeVisible();
-  await expect(page.locator("#hero").getByRole("link", { name: "Contact me" })).toHaveAttribute(
-    "href",
-    "#contact"
-  );
   expect(clientGitHubRequests).toEqual([]);
 });
 

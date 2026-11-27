@@ -24,8 +24,9 @@ export function Hero() {
           <a href="#projects" className="button button-primary">
             See selected work <ArrowDownRight aria-hidden className="size-4" />
           </a>
-          <a href="#contact" className="button button-secondary">
+          <a href={profile.bookingUrl} target="_blank" rel="noreferrer noopener" className="button button-secondary">
             Contact me <ArrowUpRight aria-hidden className="size-4" />
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
         </div>
       </div>
