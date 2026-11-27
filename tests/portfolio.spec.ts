@@ -1,6 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  // Vercel serves these scripts on deployments. The local Next.js server does not.
+  await page.route(/\/_vercel\/(?:insights|speed-insights)\/script\.js$/, (route) =>
+    route.fulfill({ contentType: "application/javascript", body: "" })
+  );
+});
+
 const viewports = [
   { name: "mobile", width: 390, height: 844 },
   { name: "small-mobile", width: 360, height: 800 },
@@ -50,6 +57,8 @@ async function expectNoHorizontalOverflow(page: Page) {
 test("baseline has no runtime, overflow, or serious accessibility failures", async ({ page }) => {
   const failures = observeRuntimeFailures(page);
   await page.goto("/", { waitUntil: "networkidle" });
+  await expect(page.locator('script[src="/_vercel/insights/script.js"]')).toHaveCount(1);
+  await expect(page.locator('script[src="/_vercel/speed-insights/script.js"]')).toHaveCount(1);
   await expectNoHorizontalOverflow(page);
 
   const results = await new AxeBuilder({ page })
